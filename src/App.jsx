@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { useControls, button } from 'leva';
-
+import { Glass } from './components/Glass';
 import EngravedCylinder from './components/EngravedCylinder';
 
 function App() {
@@ -78,11 +78,13 @@ function App() {
           <Environment preset="city" />
 
           {/* Engraved Cylinder */}
-          <EngravedCylinder
+          {/* <EngravedCylinder
             text={mode === 'text' ? text : ''}
             logoUrl={mode === 'logo' ? logoUrl : null}
             position={[0, 0, 0]}
-          />
+          /> */}
+
+          <Glass scale={0.08} position={[0, -5, 0]} />
         </Canvas>
       </div>
     </>
