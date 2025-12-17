@@ -3,11 +3,13 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
+import { BottomLogoUI } from './components/BottomLogoUI';
 
 function App() {
   const [stickerUrl, setStickerUrl] = useState(null);
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
+  const [bottomLogoUrl, setBottomLogoUrl] = useState(null);
 
   const handleImageUpload = (url, type) => {
     setStickerUrl(url);
@@ -20,11 +22,16 @@ function App() {
     setStickerUrl(null); // Clear image when text is added
   };
 
+  const handleBottomLogoUpload = (url) => {
+    setBottomLogoUrl(url);
+  };
+
   return (
     <>
       <div className="relative w-full h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-     
-
+        <BottomLogoUI 
+          onLogoUpload={handleBottomLogoUpload}
+        />
 
         <StickerUI 
           onImageUpload={handleImageUpload}
@@ -48,6 +55,7 @@ function App() {
             stickerUrl={stickerUrl}
             stickerType={stickerType}
             textSticker={textSticker}
+            bottomLogoUrl={bottomLogoUrl}
           />
         </Canvas>
       </div>

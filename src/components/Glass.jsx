@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { useControls } from 'leva'
+import EngravedHexagon from './EngravedHexagon'
 
 function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     const [texture, setTexture] = useState(null)
@@ -141,7 +142,7 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     )
 }
 
-export function Glass({ stickerUrl, stickerType, textSticker, ...props }) {
+export function Glass({ stickerUrl, stickerType, textSticker, bottomLogoUrl, ...props }) {
     const { nodes } = useGLTF('/cup.glb')
 
     return (
@@ -163,16 +164,13 @@ export function Glass({ stickerUrl, stickerType, textSticker, ...props }) {
                     color="#ffffff"
                 />
             </mesh>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.bottom.geometry}
-                position={[0.056, 3.985, -4.559]}
-                rotation={[0, 0.294, 0]}
-                scale={0.064}
-            >
-                <meshStandardMaterial color="#ff6b6b" />
-            </mesh>
+            {/* Replaced with EngravedHexagon */}
+            <EngravedHexagon 
+                logoUrl={bottomLogoUrl}
+                position={[0., 40.25, -4.3]}
+                rotation={[Math.PI / 2, 0, 0.82]}
+                scale={3.1}
+            />
             <mesh
                 castShadow
                 receiveShadow
