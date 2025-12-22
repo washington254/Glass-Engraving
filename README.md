@@ -6,7 +6,6 @@ The app combines **Three.js**, **React Three Fiber**, and **Tailwind CSS** to cr
 
 ---
 
-## ✨ Features
 
 - 🖼️ Upload **SVG** or **PNG** images and have them **engraved** directly onto a 3D cylinder.
 - 🔠 Option to engrave **custom text** using Three.js fonts.
@@ -24,7 +23,7 @@ The app combines **Three.js**, **React Three Fiber**, and **Tailwind CSS** to cr
 |-----------|-------------|
 | 3D Graphics | [Three.js](https://threejs.org/), [React Three Fiber](https://github.com/pmndrs/react-three-fiber), [Drei](https://github.com/pmndrs/drei) |
 | Boolean Operations | [three-bvh-csg](https://github.com/gkjohnson/three-bvh-csg) |
-| Image Tracing | [Potrace](https://github.com/tooolbox/potrace) |
+| Image Tracing | [Potrace]((https://www.npmjs.com/package/potrace)) |
 | UI / Styling | [Tailwind CSS](https://tailwindcss.com/) |
 | Font Handling | [Three.js FontLoader](https://threejs.org/docs/#api/en/loaders/FontLoader) |
 | Geometry Utils | [BufferGeometryUtils](https://threejs.org/docs/#examples/en/utils/BufferGeometryUtils) |
