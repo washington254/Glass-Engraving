@@ -4,12 +4,17 @@ import { OrbitControls, Environment } from '@react-three/drei';
 import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
+import EngravedCylinder from './components/EngravedCylinder';
+
+import { Leva } from "leva"
 
 function App() {
   const [stickerUrl, setStickerUrl] = useState(null);
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
   const [bottomLogoUrl, setBottomLogoUrl] = useState(null);
+  const [cylinderLogoUrl, setCylinderLogoUrl] = useState(null);
+  const [cylinderText, setCylinderText] = useState('HELLO');
 
   const handleImageUpload = (url, type) => {
     setStickerUrl(url);
@@ -26,11 +31,17 @@ function App() {
     setBottomLogoUrl(url);
   };
 
+  const handleCylinderLogoUpload = (url) => {
+    setCylinderLogoUrl(url);
+  };
+
   return (
     <>
       <div className="relative w-full h-screen bg-gradient-to-b from-gray-900 to-gray-800">
         <BottomLogoUI 
-          onLogoUpload={handleBottomLogoUpload}
+          onLogoUpload={handleCylinderLogoUpload}
+          onTextChange={setCylinderText}
+          currentText={cylinderText}
         />
 
         <StickerUI 
@@ -48,15 +59,21 @@ function App() {
 
           {/* Environment for reflections */}
           <Environment preset="city" />
+          
+          <EngravedCylinder 
+            text={cylinderText}
+            logoUrl={cylinderLogoUrl}
+            position={[0, 0, 0]}
+          />
 
-          <Glass 
+          {/* <Glass 
             scale={0.08} 
             position={[0, -5, 0]}
             stickerUrl={stickerUrl}
             stickerType={stickerType}
             textSticker={textSticker}
             bottomLogoUrl={bottomLogoUrl}
-          />
+          /> */}
         </Canvas>
       </div>
     </>

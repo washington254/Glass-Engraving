@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 
-export function BottomLogoUI({ onLogoUpload }) {
+export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = 'HELLO' }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [textInput, setTextInput] = useState(currentText);
   const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
@@ -35,11 +36,25 @@ export function BottomLogoUI({ onLogoUpload }) {
     if (file.type.startsWith('image/')) {
       const url = URL.createObjectURL(file);
       onLogoUpload(url);
+      // Clear text when logo is uploaded
+      setTextInput('');
+      onTextChange('');
     }
   };
 
   const handleClear = () => {
     onLogoUpload(null);
+    // Reset to default text when clearing
+    setTextInput('HELLO');
+    onTextChange('HELLO');
+  };
+
+  const handleAddText = () => {
+    if (textInput.trim()) {
+      onTextChange(textInput);
+      // Clear logo when text is added
+      onLogoUpload(null);
+    }
   };
 
   return (
@@ -106,30 +121,67 @@ export function BottomLogoUI({ onLogoUpload }) {
         <p className="text-xs text-gray-400 mb-2">Quick Presets:</p>
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => onLogoUpload('/heart-logo.svg')}
+            onClick={() => {
+              onLogoUpload('/heart-logo.svg');
+              setTextInput('');
+              onTextChange('');
+            }}
             className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
           >
             ❤️ Heart
           </button>
           <button
-            onClick={() => onLogoUpload('/star-logo.svg')}
+            onClick={() => {
+              onLogoUpload('/star-logo.svg');
+              setTextInput('');
+              onTextChange('');
+            }}
             className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
           >
             ⭐ Star
           </button>
           <button
-            onClick={() => onLogoUpload('/tux.png')}
+            onClick={() => {
+              onLogoUpload('/tux.png');
+              setTextInput('');
+              onTextChange('');
+            }}
             className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
           >
             🐧 Tux
           </button>
           <button
-            onClick={() => onLogoUpload('/sample-logo.svg')}
+            onClick={() => {
+              onLogoUpload('/sample-logo.svg');
+              setTextInput('');
+              onTextChange('');
+            }}
             className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
           >
             📦 Sample
           </button>
         </div>
+      </div>
+
+      {/* Text Input Section */}
+      <div className="mt-4 pt-4 border-t border-gray-700">
+        <label className="block text-sm text-gray-300 mb-2">
+          Or Add Text
+        </label>
+        <input
+          type="text"
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
+          placeholder="Enter text..."
+          className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm mb-2"
+        />
+        <button
+          onClick={handleAddText}
+          className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm transition-colors"
+        >
+          Add Text
+        </button>
       </div>
     </div>
   );

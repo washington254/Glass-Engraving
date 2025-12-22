@@ -151,10 +151,11 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0]
       if (!font && !logoUrl) return;
 
       try {
-        // Create larger cylinder for bigger engraving area
-        const cylinderGeometry = new THREE.CylinderGeometry(3, 3, 2, 128);
-        const cylinderBrush = new Brush(cylinderGeometry);
-        cylinderBrush.updateMatrixWorld();
+        // Create hexagonal prism (6 sides instead of 128 for cylinder)
+        // Scaled down to 0.7 of original size
+        const hexagonGeometry = new THREE.CylinderGeometry(2.1, 2.1, 1.4, 6);
+        const hexagonBrush = new Brush(hexagonGeometry);
+        hexagonBrush.updateMatrixWorld();
 
         let engravingGeometry = null;
 
@@ -173,11 +174,11 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0]
         }
 
         if (!engravingGeometry) {
-          setGeometry(cylinderGeometry);
+          setGeometry(hexagonGeometry);
           return;
         }
 
-        // Center and position engraving on cylinder surface
+        // Center and position engraving on bottom face of hexagon
         engravingGeometry.computeBoundingBox();
         const box = engravingGeometry.boundingBox;
         const centerX = (box.max.x + box.min.x) / 2;
@@ -189,18 +190,23 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0]
         const maxSize = logoUrl ? 1.5 : 3; // Smaller for logos, larger for text
         const scale = Math.min(maxSize / width, maxSize / height, 1);
         
+        // Center the geometry
         engravingGeometry.translate(-centerX, -centerY, 0);
         // Flip Y-axis for logos
-        const isPNG = logoUrl && !logoUrl.toLowerCase().endsWith('.svg');
         engravingGeometry.scale(scale, -scale, 1);
-        engravingGeometry.translate(0, 0, 2.85);
+        
+        // Rotate 90 degrees to lay flat on bottom face
+        engravingGeometry.rotateX(Math.PI / 2);
+        
+        // Position at bottom of hexagon (y = -0.7 since height is 1.4)
+        engravingGeometry.translate(0, -0.7, 0);
 
         const engravingBrush = new Brush(engravingGeometry);
         engravingBrush.updateMatrixWorld();
 
         // Perform CSG subtraction
         const evaluator = new Evaluator();
-        const result = evaluator.evaluate(cylinderBrush, engravingBrush, SUBTRACTION);
+        const result = evaluator.evaluate(hexagonBrush, engravingBrush, SUBTRACTION);
 
         // Clean up old geometry
         if (geometry) {
@@ -210,8 +216,8 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0]
         setGeometry(result.geometry);
       } catch (error) {
         console.error('CSG operation failed:', error);
-        // Fallback to plain cylinder
-        setGeometry(new THREE.CylinderGeometry(3, 3, 2, 128));
+        // Fallback to plain hexagon
+        setGeometry(new THREE.CylinderGeometry(2.1, 2.1, 1.4, 6));
       }
     };
 
