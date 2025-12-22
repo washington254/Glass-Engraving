@@ -140,6 +140,16 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = 'HELLO'
           >
             ⭐ Star
           </button>
+              <button
+            onClick={() => {
+              onLogoUpload('/rose.svg');
+              setTextInput('');
+              onTextChange('');
+            }}
+            className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
+          >
+            rose
+          </button>
           <button
             onClick={() => {
               onLogoUpload('/sample-logo.svg');
