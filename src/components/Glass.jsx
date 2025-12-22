@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { useControls } from 'leva'
+import { useMaterialStore } from '../store'
+import { GlassMaterial } from './GlassMaterial'
 
 function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     const [texture, setTexture] = useState(null)
@@ -13,7 +15,7 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
         enabled: { value: true, label: 'Enable Curve' },
         radius: { value: 28, min: 10, max: 200, step: 1, label: 'Cylinder Radius' },
         strength: { value: .85, min: 0, max: 2, step: 0.01, label: 'Curve Strength' },
-        segments: { value: 32, min: 8, max: 64, step: 1, label: 'Segments' },
+        segments: { value: 24, min: 8, max: 64, step: 1, label: 'Segments' }, // Reduced default from 32
         yRadius: { value: 423, min: 10, max: 500, step: 1, label: 'Y Curve Radius' },
         yStrength: { value: 2, min: 0, max: 2, step: 0.01, label: 'Y Curve Strength' }
     })
@@ -55,20 +57,27 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
         } else {
             setTexture(null)
         }
+        
+        // Cleanup old texture
+        return () => {
+            if (texture) {
+                texture.dispose()
+            }
+        }
     }, [stickerUrl, textSticker])
     
-    // Custom shader material for cylindrical curve
+    // Create shader material only once, update uniforms separately
     const curvedMaterial = useMemo(() => {
         if (!texture) return null
         
         return new THREE.ShaderMaterial({
             uniforms: {
                 map: { value: texture },
-                radius: { value: curveControls.radius },
-                strength: { value: curveControls.strength },
-                enabled: { value: curveControls.enabled ? 1.0 : 0.0 },
-                yRadius: { value: curveControls.yRadius },
-                yStrength: { value: curveControls.yStrength }
+                radius: { value: 28 },
+                strength: { value: 0.85 },
+                enabled: { value: 1.0 },
+                yRadius: { value: 423 },
+                yStrength: { value: 2 }
             },
             vertexShader: `
                 uniform float radius;
@@ -116,9 +125,9 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
             depthTest: true,
             depthWrite: false
         })
-    }, [texture, curveControls.radius, curveControls.strength, curveControls.enabled])
+    }, [texture]) // Only recreate when texture changes
     
-    // Update uniforms when controls change
+    // Update uniforms when controls change (without recreating material)
     useEffect(() => {
         if (curvedMaterial) {
             curvedMaterial.uniforms.radius.value = curveControls.radius
@@ -126,44 +135,43 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
             curvedMaterial.uniforms.enabled.value = curveControls.enabled ? 1.0 : 0.0
             curvedMaterial.uniforms.yRadius.value = curveControls.yRadius
             curvedMaterial.uniforms.yStrength.value = curveControls.yStrength
-            curvedMaterial.uniforms.map.value = texture
         }
-    }, [curvedMaterial, curveControls, texture])
+    }, [curvedMaterial, curveControls.radius, curveControls.strength, curveControls.enabled, curveControls.yRadius, curveControls.yStrength])
+    
+    // Memoize geometry to prevent recreation on every render
+    const planeGeom = useMemo(() => {
+        return new THREE.PlaneGeometry(30, 30, curveControls.segments, curveControls.segments)
+    }, [curveControls.segments])
+    
+    // Cleanup
+    useEffect(() => {
+        return () => {
+            if (curvedMaterial) {
+                curvedMaterial.dispose()
+            }
+            if (planeGeom) {
+                planeGeom.dispose()
+            }
+        }
+    }, [curvedMaterial, planeGeom])
     
     if (!texture || !curvedMaterial) return null
     
     return (
-        <mesh position={position} rotation={rotation} scale={scale}>
-            {/* Plane with more segments for smooth curve */}
-            <planeGeometry args={[30, 30, curveControls.segments, curveControls.segments]} />
+        <mesh position={position} rotation={rotation} scale={scale} geometry={planeGeom}>
             <primitive object={curvedMaterial} attach="material" />
         </mesh>
     )
 }
 
 export function Glass({ stickerUrl, stickerType, textSticker, bottomLogoUrl, ...props }) {
-    const { nodes } = useGLTF('/cup.glb')
+    const { nodes } = useGLTF('/cup2.glb')
+    const performanceMode = useMaterialStore((state) => state.performanceMode)
 
+    console.log(nodes);
+    
     return (
         <group {...props} dispose={null}>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.body.geometry}
-                position={[0.056, 3.985, -4.559]}
-                rotation={[0, 0.424, 0]}
-                scale={0.064}
-            >
-                <meshPhysicalMaterial
-                    transmission={1}
-                    roughness={0}
-                    thickness={0.5}
-                    ior={1.5}
-                    clearcoat={1}
-                    color="#ffffff"
-                />
-            </mesh>
-       
             <mesh
                 castShadow
                 receiveShadow
@@ -172,16 +180,9 @@ export function Glass({ stickerUrl, stickerType, textSticker, bottomLogoUrl, ...
                 rotation={[0, 0.424, 0]}
                 scale={0.064}
             >
-                 <meshPhysicalMaterial
-                    transmission={1}
-                    roughness={0}
-                    thickness={0.5}
-                    ior={1.5}
-                    clearcoat={1}
-                    color="#ffffff"
-                />
+              <GlassMaterial mode={performanceMode} />
             </mesh>
-            
+       
             {/* Sticker overlay plane - positioned on the front mesh */}
             <StickerPlane 
                 stickerUrl={stickerUrl} 
@@ -194,4 +195,4 @@ export function Glass({ stickerUrl, stickerType, textSticker, bottomLogoUrl, ...
     )
 }
 
-useGLTF.preload('/cup.glb')
+useGLTF.preload('/cup2.glb')

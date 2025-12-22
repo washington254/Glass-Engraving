@@ -5,14 +5,29 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
-import { Html, MeshTransmissionMaterial } from '@react-three/drei';
+import { Html,MeshTransmissionMaterial } from '@react-three/drei';
 import Potrace from 'potrace';
+import { useControls } from 'leva';
+import { useMaterialStore } from '../store';
+import { GlassMaterial } from './GlassMaterial';
 
-const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0] }) => {
+const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, -1.5, -0.4] }) => {
   const meshRef = useRef();
   const [font, setFont] = useState(null);
   const [geometry, setGeometry] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const performanceMode = useMaterialStore((state) => state.performanceMode);
+
+  // Leva controls for position, rotation, and scale
+  const cylinderControls = useControls('Engraved Cylinder', {
+    positionX: { value: position[0], min: -10, max: 10, step: 0.1, label: 'Position X' },
+    positionY: { value: -1.5, min: -10, max: 10, step: 0.1, label: 'Position Y' },
+    positionZ: { value: -0.4, min: -10, max: 10, step: 0.1, label: 'Position Z' },
+    rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
+    rotationY: { value: 0.29, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
+    rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
+    scale: { value: 0.4, min: 0.1, max: 5, step: 0.1, label: 'Scale' },
+  });
 
   // Load font on mount
   useEffect(() => {
@@ -241,25 +256,33 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, 0, 0]
   }
 
   return (
-    <mesh ref={meshRef} position={position} geometry={geometry} castShadow>
-      <MeshTransmissionMaterial
-        backside
-        samples={16}
-        resolution={512}
-        transmission={0.95}
-        roughness={0.1}
-        thickness={0.5}
-        ior={1.5}
-        chromaticAberration={0.05}
-        anisotropy={0.3}
-        distortion={0.1}
-        distortionScale={0.2}
-        temporalDistortion={0.1}
-        clearcoat={1}
-        attenuationDistance={0.5}
-        attenuationColor="#ffffff"
-        color="#ffffff"
-      />
+    <mesh 
+      ref={meshRef} 
+      position={[cylinderControls.positionX, cylinderControls.positionY, cylinderControls.positionZ]}
+      rotation={[cylinderControls.rotationX, cylinderControls.rotationY, cylinderControls.rotationZ]}
+      scale={cylinderControls.scale}
+      geometry={geometry} 
+      castShadow
+    >
+      {/* <GlassMaterial mode={performanceMode} /> */}
+         <MeshTransmissionMaterial
+              samples={3}
+              resolution={256}
+              transmission={0.9}
+              roughness={0.1}
+              thickness={0.5}
+              ior={1.5}
+              chromaticAberration={0.02}
+              anisotropy={0.1}
+              distortion={0}
+              distortionScale={0}
+              temporalDistortion={0}
+              clearcoat={0}
+              attenuationDistance={0.5}
+              attenuationColor="#ffffff"
+              color="#ffffff"
+              backside={false}
+            />
     </mesh>
   );
 };

@@ -38,6 +38,8 @@ function App() {
   return (
     <>
       <div className="relative w-full h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+   
+        
         <BottomLogoUI 
           onLogoUpload={handleCylinderLogoUpload}
           onTextChange={setCylinderText}
@@ -66,14 +68,14 @@ function App() {
             position={[0, 0, 0]}
           />
 
-          {/* <Glass 
+          <Glass 
             scale={0.08} 
             position={[0, -5, 0]}
             stickerUrl={stickerUrl}
             stickerType={stickerType}
             textSticker={textSticker}
             bottomLogoUrl={bottomLogoUrl}
-          /> */}
+          />
         </Canvas>
       </div>
     </>
