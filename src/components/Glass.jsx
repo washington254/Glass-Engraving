@@ -164,7 +164,7 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     )
 }
 
-export function Glass({ stickerUrl, stickerType, textSticker, bottomLogoUrl, ...props }) {
+export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl, ...props }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
 

@@ -20,19 +20,8 @@ export function GlassMaterial({ mode = 'fast', ...props }) {
   if (mode === 'balanced') {
     // Physical material - good balance of quality and performance
     return (
-      <meshPhysicalMaterial
-        color={0xffffff}
-        metalness={0}
-        roughness={0.2}
-        transmission={1}
-        ior={1.5}
-        reflectivity={0.5}
-        thickness={2.5}
-        envMapIntensity={1.5}
-        clearcoat={1}
-        clearcoatRoughness={0.1}
-        opacity={0.48}
-        transparent={true}
+       <meshStandardMaterial
+        color="#232323"
         {...props}
       />
     )

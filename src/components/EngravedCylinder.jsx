@@ -11,7 +11,7 @@ import { useControls } from 'leva';
 import { useMaterialStore } from '../store';
 import { GlassMaterial } from './GlassMaterial';
 
-const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, -1.5, -0.4] }) => {
+const EngravedCylinder = ({ text = 'HELLO', logoUrl = '/star-logo.svg', position = [0, -1.5, -0.4] }) => {
   const meshRef = useRef();
   const [font, setFont] = useState(null);
   const [geometry, setGeometry] = useState(null);
@@ -265,24 +265,24 @@ const EngravedCylinder = ({ text = 'HELLO', logoUrl = null, position = [0, -1.5,
       castShadow
     >
       {/* <GlassMaterial mode={performanceMode} /> */}
-         <MeshTransmissionMaterial
-              samples={3}
-              resolution={256}
-              transmission={0.9}
-              roughness={0.1}
-              thickness={0.5}
-              ior={1.5}
-              chromaticAberration={0.02}
-              anisotropy={0.1}
-              distortion={0}
-              distortionScale={0}
-              temporalDistortion={0}
-              clearcoat={0}
-              attenuationDistance={0.5}
-              attenuationColor="#ffffff"
-              color="#ffffff"
-              backside={false}
-            />
+        <MeshTransmissionMaterial
+        backside
+        samples={16}
+        resolution={512}
+        transmission={0.95}
+        roughness={0.1}
+        thickness={0.5}
+        ior={1.5}
+        chromaticAberration={0.05}
+        anisotropy={0.3}
+        distortion={0.1}
+        distortionScale={0.2}
+        temporalDistortion={0.1}
+        clearcoat={1}
+        attenuationDistance={0.5}
+        attenuationColor="#ffffff"
+        color="#ffffff"
+      />
     </mesh>
   );
 };

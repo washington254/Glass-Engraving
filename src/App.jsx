@@ -7,11 +7,11 @@ import { BottomLogoUI } from './components/BottomLogoUI';
 import EngravedCylinder from './components/EngravedCylinder';
 
 function App() {
-  const [stickerUrl, setStickerUrl] = useState(null);
+  const [stickerUrl, setStickerUrl] = useState('/tux.png');
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
   const [bottomLogoUrl, setBottomLogoUrl] = useState(null);
-  const [cylinderLogoUrl, setCylinderLogoUrl] = useState(null);
+  const [cylinderLogoUrl, setCylinderLogoUrl] = useState('/star-logo.svg');
   const [cylinderText, setCylinderText] = useState('HELLO');
 
   const handleImageUpload = (url, type) => {
