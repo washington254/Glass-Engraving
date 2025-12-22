@@ -6,8 +6,6 @@ import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
 import EngravedCylinder from './components/EngravedCylinder';
 
-import { Leva } from "leva"
-
 function App() {
   const [stickerUrl, setStickerUrl] = useState(null);
   const [stickerType, setStickerType] = useState(null);
@@ -37,7 +35,7 @@ function App() {
 
   return (
     <>
-      <div className="relative w-full h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+      <div className="relative w-full h-screen bg-dark">
    
         
         <BottomLogoUI 
@@ -59,8 +57,8 @@ function App() {
           <spotLight position={[5, 5, 5]} intensity={1} castShadow />
           <spotLight position={[-5, 5, 5]} intensity={0.5} />
 
-          {/* Environment for reflections */}
-          <Environment preset="city" />
+          {/* Environment for reflections - using HDR */}
+          <Environment files="/sky.hdr" />
           
           <EngravedCylinder 
             text={cylinderText}

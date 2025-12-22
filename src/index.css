@@ -5,7 +5,7 @@
 
 /* Making background dark & some font stuff... you can delete this  */
 :root {
-    background-color: #242424;
+    background-color: #000;
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;

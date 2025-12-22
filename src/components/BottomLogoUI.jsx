@@ -142,16 +142,6 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = 'HELLO'
           </button>
           <button
             onClick={() => {
-              onLogoUpload('/tux.png');
-              setTextInput('');
-              onTextChange('');
-            }}
-            className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-          >
-            🐧 Tux
-          </button>
-          <button
-            onClick={() => {
               onLogoUpload('/sample-logo.svg');
               setTextInput('');
               onTextChange('');
