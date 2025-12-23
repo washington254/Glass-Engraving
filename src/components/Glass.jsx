@@ -7,18 +7,18 @@ import { useControls } from 'leva'
 import { useMaterialStore } from '../store'
 import { GlassMaterial } from './GlassMaterial'
 
-function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
+function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curveSettings = null }) {
     const [texture, setTexture] = useState(null)
     
-    // Leva controls for curve parameters
-    const curveControls = useControls('Sticker Curve', {
-        enabled: { value: true, label: 'Enable Curve' },
-        radius: { value: 28, min: 10, max: 200, step: 1, label: 'Cylinder Radius' },
-        strength: { value: .85, min: 0, max: 2, step: 0.01, label: 'Curve Strength' },
-        segments: { value: 24, min: 8, max: 64, step: 1, label: 'Segments' }, // Reduced default from 32
-        yRadius: { value: 423, min: 10, max: 500, step: 1, label: 'Y Curve Radius' },
-        yStrength: { value: 2, min: 0, max: 2, step: 0.01, label: 'Y Curve Strength' }
-    })
+    // Use provided curve settings or defaults (no curve)
+    const curveParams = curveSettings || {
+        enabled: false,
+        radius: 28,
+        strength: 0.85,
+        segments: 24,
+        yRadius: 423,
+        yStrength: 2
+    }
     
     useEffect(() => {
         if (textSticker) {
@@ -73,11 +73,11 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
         return new THREE.ShaderMaterial({
             uniforms: {
                 map: { value: texture },
-                radius: { value: 28 },
-                strength: { value: 0.85 },
-                enabled: { value: 1.0 },
-                yRadius: { value: 423 },
-                yStrength: { value: 2 }
+                radius: { value: curveParams.radius },
+                strength: { value: curveParams.strength },
+                enabled: { value: curveParams.enabled ? 1.0 : 0.0 },
+                yRadius: { value: curveParams.yRadius },
+                yStrength: { value: curveParams.yStrength }
             },
             vertexShader: `
                 uniform float radius;
@@ -125,23 +125,12 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
             depthTest: true,
             depthWrite: false
         })
-    }, [texture]) // Only recreate when texture changes
-    
-    // Update uniforms when controls change (without recreating material)
-    useEffect(() => {
-        if (curvedMaterial) {
-            curvedMaterial.uniforms.radius.value = curveControls.radius
-            curvedMaterial.uniforms.strength.value = curveControls.strength
-            curvedMaterial.uniforms.enabled.value = curveControls.enabled ? 1.0 : 0.0
-            curvedMaterial.uniforms.yRadius.value = curveControls.yRadius
-            curvedMaterial.uniforms.yStrength.value = curveControls.yStrength
-        }
-    }, [curvedMaterial, curveControls.radius, curveControls.strength, curveControls.enabled, curveControls.yRadius, curveControls.yStrength])
+    }, [texture, curveParams]) // Recreate when texture or curve params change
     
     // Memoize geometry to prevent recreation on every render
     const planeGeom = useMemo(() => {
-        return new THREE.PlaneGeometry(30, 30, curveControls.segments, curveControls.segments)
-    }, [curveControls.segments])
+        return new THREE.PlaneGeometry(30, 30, curveParams.segments, curveParams.segments)
+    }, [curveParams.segments])
     
     // Cleanup
     useEffect(() => {
@@ -164,18 +153,8 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     )
 }
 
-function PentagonalPlane() {
+function PentagonalPlane({ position, rotation, scale }) {
     const performanceMode = useMaterialStore((state) => state.performanceMode)
-    
-    const pentagonControls = useControls('Pentagonal Plane', {
-        positionX: { value: -0.5, min: -10, max: 100, step: 0.01, label: 'Position X' },
-        positionY: { value: 39.5, min: -10, max: 100, step: 0.01, label: 'Position Y' },
-        positionZ: { value: -4.1, min: -10, max: 100, step: 0.01, label: 'Position Z' },
-        rotationX: { value: Math.PI / 2 , min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
-        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
-        rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
-        scale: { value: 12.9, min: 0.1, max: 19, step: 0.1, label: 'Scale' }
-    })
     
     const pentagonGeometry = useMemo(() => {
         const shape = new THREE.Shape()
@@ -209,12 +188,11 @@ function PentagonalPlane() {
             castShadow
             receiveShadow
             geometry={pentagonGeometry}
-            position={[pentagonControls.positionX, pentagonControls.positionY, pentagonControls.positionZ]}
-            rotation={[pentagonControls.rotationX, pentagonControls.rotationY, pentagonControls.rotationZ]}
-            scale={pentagonControls.scale}
+            position={position}
+            rotation={rotation}
+            scale={scale}
         >
-            <meshStandardMaterial color="#232323" side={THREE.DoubleSide} />
-            {/* <GlassMaterial mode={performanceMode} /> */}
+            <GlassMaterial mode={performanceMode} />
         </mesh>
     )
 }
@@ -222,6 +200,27 @@ function PentagonalPlane() {
 export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl, ...props }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
+    
+    // Leva controls for bottom sticker plane
+    const bottomStickerControls = useControls('Bottom Sticker', {
+        positionX: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position X' },
+        positionY: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Y' },
+        positionZ: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Z' },
+        rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
+        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
+        rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
+        scale: { value: 1, min: 0.1, max: 50, step: 0.1, label: 'Scale ' },
+    })
+    
+    // Curve settings for front sticker (hardcoded values from your alignment)
+    const frontCurveSettings = {
+        enabled: true,
+        radius: 28,
+        strength: 0.85,
+        segments: 24,
+        yRadius: 423,
+        yStrength: 2
+    }
     
     return (
         <group {...props} dispose={null}>
@@ -236,17 +235,40 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
               <GlassMaterial mode={performanceMode} />
             </mesh>
        
-            {/* Sticker overlay plane - positioned on the front mesh */}
+            {/* Front sticker overlay plane - curved to match glass */}
             <StickerPlane 
                 stickerUrl={stickerUrl} 
                 textSticker={textSticker}
                 position={[-0.056, 76.985, 21.3]}
                 rotation={[0.0, -0., 0.]}
-                scale={[.9,0.7,0.9]}
+                scale={[.9, 0.7, 0.9]}
+                curveSettings={frontCurveSettings}
             />
             
-            {/* Pentagonal plane with glass material */}
-            <PentagonalPlane />
+            {/* Pentagonal plane with glass material - using your aligned values */}
+            <PentagonalPlane 
+                position={[-0.5, 39.5, -4.1]}
+                rotation={[Math.PI / 2, 0, 0]}
+                scale={12.9}
+            />
+            
+            {/* Bottom sticker plane - flat, positioned on pentagon */}
+            <StickerPlane 
+                stickerUrl={stickerUrl} 
+                textSticker={null}
+                position={[
+                    0,
+                    39.4,
+                    -4.1
+                ]}
+                rotation={[
+                    Math.PI / 2,
+                   0,
+                  0
+                ]}
+                scale={.6}
+                curveSettings={null}
+            />
         </group>
     )
 }
