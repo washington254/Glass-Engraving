@@ -4,15 +4,13 @@ import { OrbitControls, Environment } from '@react-three/drei';
 import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
-import EngravedCylinder from './components/EngravedCylinder';
 
 function App() {
   const [stickerUrl, setStickerUrl] = useState('/tux.png');
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
-  const [bottomLogoUrl, setBottomLogoUrl] = useState(null);
-  const [cylinderLogoUrl, setCylinderLogoUrl] = useState('/star-logo.svg');
-  const [cylinderText, setCylinderText] = useState('HELLO');
+  const [bottomLogoUrl, setBottomLogoUrl] = useState('/tux.png');
+  const [bottomText, setBottomText] = useState('');
 
   const handleImageUpload = (url, type) => {
     setStickerUrl(url);
@@ -29,8 +27,8 @@ function App() {
     setBottomLogoUrl(url);
   };
 
-  const handleCylinderLogoUpload = (url) => {
-    setCylinderLogoUrl(url);
+  const handleBottomTextChange = (text) => {
+    setBottomText(text);
   };
 
   return (
@@ -39,9 +37,9 @@ function App() {
    
         
         <BottomLogoUI 
-          onLogoUpload={handleCylinderLogoUpload}
-          onTextChange={setCylinderText}
-          currentText={cylinderText}
+          onLogoUpload={handleBottomLogoUpload}
+          onTextChange={handleBottomTextChange}
+          currentText={bottomText}
         />
 
         <StickerUI 
@@ -73,6 +71,7 @@ function App() {
             stickerType={stickerType}
             textSticker={textSticker}
             bottomLogoUrl={bottomLogoUrl}
+            bottomText={bottomText}
           />
         </Canvas>
       </div>

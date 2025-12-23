@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 
-export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = 'HELLO' }) {
+export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   const [isDragging, setIsDragging] = useState(false);
   const [textInput, setTextInput] = useState(currentText);
   const fileInputRef = useRef(null);
@@ -43,10 +43,10 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = 'HELLO'
   };
 
   const handleClear = () => {
-    onLogoUpload(null);
-    // Reset to default text when clearing
-    setTextInput('HELLO');
-    onTextChange('HELLO');
+    onLogoUpload('/tux.png');
+    // Reset to empty text when clearing
+    setTextInput('');
+    onTextChange('');
   };
 
   const handleAddText = () => {

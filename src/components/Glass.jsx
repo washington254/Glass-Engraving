@@ -9,7 +9,7 @@ import { GlassMaterial } from './GlassMaterial'
 
 function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curveSettings = null }) {
     const [texture, setTexture] = useState(null)
-    
+
     // Use provided curve settings or defaults (no curve)
     const curveParams = curveSettings || {
         enabled: false,
@@ -19,7 +19,7 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
         yRadius: 423,
         yStrength: 2
     }
-    
+
     useEffect(() => {
         if (textSticker) {
             // Create canvas texture for text
@@ -27,17 +27,17 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             canvas.width = 512
             canvas.height = 512
             const ctx = canvas.getContext('2d')
-            
+
             // Clear canvas with transparent background
             ctx.clearRect(0, 0, canvas.width, canvas.height)
-            
+
             // Draw text with white color
             ctx.fillStyle = '#ffffff'
             ctx.font = 'bold 80px Arial'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'middle'
             ctx.fillText(textSticker, canvas.width / 2, canvas.height / 2)
-            
+
             const canvasTexture = new THREE.CanvasTexture(canvas)
             canvasTexture.needsUpdate = true
             setTexture(canvasTexture)
@@ -57,7 +57,7 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
         } else {
             setTexture(null)
         }
-        
+
         // Cleanup old texture
         return () => {
             if (texture) {
@@ -65,11 +65,11 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             }
         }
     }, [stickerUrl, textSticker])
-    
+
     // Create shader material only once, update uniforms separately
     const curvedMaterial = useMemo(() => {
         if (!texture) return null
-        
+
         return new THREE.ShaderMaterial({
             uniforms: {
                 map: { value: texture },
@@ -126,12 +126,12 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             depthWrite: false
         })
     }, [texture, curveParams]) // Recreate when texture or curve params change
-    
+
     // Memoize geometry to prevent recreation on every render
     const planeGeom = useMemo(() => {
         return new THREE.PlaneGeometry(30, 30, curveParams.segments, curveParams.segments)
     }, [curveParams.segments])
-    
+
     // Cleanup
     useEffect(() => {
         return () => {
@@ -143,9 +143,9 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             }
         }
     }, [curvedMaterial, planeGeom])
-    
+
     if (!texture || !curvedMaterial) return null
-    
+
     return (
         <mesh position={position} rotation={rotation} scale={scale} geometry={planeGeom}>
             <primitive object={curvedMaterial} attach="material" />
@@ -155,17 +155,17 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
 
 function PentagonalPlane({ position, rotation, scale }) {
     const performanceMode = useMaterialStore((state) => state.performanceMode)
-    
+
     const pentagonGeometry = useMemo(() => {
         const shape = new THREE.Shape()
         const sides = 5
         const radius = 1
-        
+
         for (let i = 0; i < sides; i++) {
             const angle = (i / sides) * Math.PI * 2 - Math.PI / 2
             const x = Math.cos(angle) * radius
             const y = Math.sin(angle) * radius
-            
+
             if (i === 0) {
                 shape.moveTo(x, y)
             } else {
@@ -173,16 +173,16 @@ function PentagonalPlane({ position, rotation, scale }) {
             }
         }
         shape.closePath()
-        
+
         return new THREE.ShapeGeometry(shape)
     }, [])
-    
+
     useEffect(() => {
         return () => {
             pentagonGeometry.dispose()
         }
     }, [pentagonGeometry])
-    
+
     return (
         <mesh
             castShadow
@@ -197,10 +197,10 @@ function PentagonalPlane({ position, rotation, scale }) {
     )
 }
 
-export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl, ...props }) {
+export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl = '/tux.png', bottomText, ...props }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
-    
+
     // Leva controls for bottom sticker plane
     const bottomStickerControls = useControls('Bottom Sticker', {
         positionX: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position X' },
@@ -211,7 +211,7 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
         rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
         scale: { value: 1, min: 0.1, max: 50, step: 0.1, label: 'Scale ' },
     })
-    
+
     // Curve settings for front sticker (hardcoded values from your alignment)
     const frontCurveSettings = {
         enabled: true,
@@ -221,7 +221,7 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
         yRadius: 423,
         yStrength: 2
     }
-    
+
     return (
         <group {...props} dispose={null}>
             <mesh
@@ -232,30 +232,30 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
                 rotation={[0, 0.424, 0]}
                 scale={0.064}
             >
-              <GlassMaterial mode={performanceMode} />
+                <GlassMaterial mode={performanceMode} />
             </mesh>
-       
+
             {/* Front sticker overlay plane - curved to match glass */}
-            <StickerPlane 
-                stickerUrl={stickerUrl} 
+            <StickerPlane
+                stickerUrl={stickerUrl}
                 textSticker={textSticker}
                 position={[-0.056, 76.985, 21.3]}
                 rotation={[0.0, -0., 0.]}
                 scale={[.9, 0.7, 0.9]}
                 curveSettings={frontCurveSettings}
             />
-            
+
             {/* Pentagonal plane with glass material - using your aligned values */}
-            <PentagonalPlane 
+            <PentagonalPlane
                 position={[-0.5, 39.5, -4.1]}
                 rotation={[Math.PI / 2, 0, 0]}
                 scale={12.9}
             />
-            
+
             {/* Bottom sticker plane - flat, positioned on pentagon */}
-            <StickerPlane 
-                stickerUrl={stickerUrl} 
-                textSticker={null}
+            <StickerPlane
+                stickerUrl={bottomLogoUrl}
+                textSticker={bottomText}
                 position={[
                     0,
                     39.4,
@@ -263,8 +263,8 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
                 ]}
                 rotation={[
                     Math.PI / 2,
-                   0,
-                  0
+                    0,
+                    0
                 ]}
                 scale={.6}
                 curveSettings={null}
