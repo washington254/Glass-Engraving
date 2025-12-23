@@ -164,11 +164,64 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale }) {
     )
 }
 
+function PentagonalPlane() {
+    const performanceMode = useMaterialStore((state) => state.performanceMode)
+    
+    const pentagonControls = useControls('Pentagonal Plane', {
+        positionX: { value: -0.5, min: -10, max: 100, step: 0.01, label: 'Position X' },
+        positionY: { value: 39.5, min: -10, max: 100, step: 0.01, label: 'Position Y' },
+        positionZ: { value: -4.1, min: -10, max: 100, step: 0.01, label: 'Position Z' },
+        rotationX: { value: Math.PI / 2 , min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
+        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
+        rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
+        scale: { value: 12.9, min: 0.1, max: 19, step: 0.1, label: 'Scale' }
+    })
+    
+    const pentagonGeometry = useMemo(() => {
+        const shape = new THREE.Shape()
+        const sides = 5
+        const radius = 1
+        
+        for (let i = 0; i < sides; i++) {
+            const angle = (i / sides) * Math.PI * 2 - Math.PI / 2
+            const x = Math.cos(angle) * radius
+            const y = Math.sin(angle) * radius
+            
+            if (i === 0) {
+                shape.moveTo(x, y)
+            } else {
+                shape.lineTo(x, y)
+            }
+        }
+        shape.closePath()
+        
+        return new THREE.ShapeGeometry(shape)
+    }, [])
+    
+    useEffect(() => {
+        return () => {
+            pentagonGeometry.dispose()
+        }
+    }, [pentagonGeometry])
+    
+    return (
+        <mesh
+            castShadow
+            receiveShadow
+            geometry={pentagonGeometry}
+            position={[pentagonControls.positionX, pentagonControls.positionY, pentagonControls.positionZ]}
+            rotation={[pentagonControls.rotationX, pentagonControls.rotationY, pentagonControls.rotationZ]}
+            scale={pentagonControls.scale}
+        >
+            <meshStandardMaterial color="#232323" side={THREE.DoubleSide} />
+            {/* <GlassMaterial mode={performanceMode} /> */}
+        </mesh>
+    )
+}
+
 export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl, ...props }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
-
-    console.log(nodes);
     
     return (
         <group {...props} dispose={null}>
@@ -191,6 +244,9 @@ export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, botto
                 rotation={[0.0, -0., 0.]}
                 scale={[.9,0.7,0.9]}
             />
+            
+            {/* Pentagonal plane with glass material */}
+            <PentagonalPlane />
         </group>
     )
 }

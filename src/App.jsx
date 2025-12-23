@@ -60,11 +60,11 @@ function App() {
           {/* Environment for reflections - using HDR */}
           <Environment files="/sky.hdr" />
           
-          <EngravedCylinder 
+          {/* <EngravedCylinder 
             text={cylinderText}
             logoUrl={cylinderLogoUrl}
             position={[0, 0, 0]}
-          />
+          /> */}
 
           <Glass 
             scale={0.08} 
