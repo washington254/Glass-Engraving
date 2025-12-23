@@ -117,7 +117,16 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
                 
                 void main() {
                     vec4 texColor = texture2D(map, vUv);
-                    gl_FragColor = texColor;
+                    
+                    // Convert to grayscale using luminance formula
+                    // This is the standard formula for perceived brightness
+                    float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
+                    
+                    // Apply black and white effect
+                    vec3 bw = vec3(gray);
+                    
+                    // Keep the original alpha channel for transparency
+                    gl_FragColor = vec4(bw, texColor.a);
                 }
             `,
             transparent: true,
