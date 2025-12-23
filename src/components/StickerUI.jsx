@@ -33,10 +33,15 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
   };
 
   const handleFile = (file) => {
-    if (file.type.startsWith('image/')) {
-      const url = URL.createObjectURL(file);
-      onImageUpload(url, file.type);
+    const allowedTypes = ['image/png', 'image/svg+xml', 'image/webp'];
+    
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload only PNG, SVG, or WebP images with transparent backgrounds.');
+      return;
     }
+    
+    const url = URL.createObjectURL(file);
+    onImageUpload(url, file.type);
   };
 
   const handleTextSubmit = () => {
@@ -78,7 +83,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
             Drag & drop image here
           </p>
           <p className="text-xs text-gray-500 mb-3">
-            PNG, SVG, JPG (with transparency)
+            PNG, SVG, WebP (with transparency)
           </p>
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -89,7 +94,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/png,image/svg+xml,image/jpeg,image/jpg"
+            accept="image/png,image/svg+xml,image/webp"
             onChange={handleFileInput}
             className="hidden"
           />
@@ -134,7 +139,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
             ⭐ Star
           </button>
           <button
-            onClick={() => onImageUpload('/tux.png', 'image/png')}
+            onClick={() => onImageUpload('/roses.png', 'image/png')}
             className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
           >
             🐧 Tux

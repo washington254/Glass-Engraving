@@ -6,10 +6,10 @@ import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
 
 function App() {
-  const [stickerUrl, setStickerUrl] = useState('/tux.png');
+  const [stickerUrl, setStickerUrl] = useState('/roses.png');
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
-  const [bottomLogoUrl, setBottomLogoUrl] = useState('/tux.png');
+  const [bottomLogoUrl, setBottomLogoUrl] = useState('/roses.png');
   const [bottomText, setBottomText] = useState('');
 
   const handleImageUpload = (url, type) => {

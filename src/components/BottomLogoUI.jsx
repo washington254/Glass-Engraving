@@ -33,13 +33,18 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   };
 
   const handleFile = (file) => {
-    if (file.type.startsWith('image/')) {
-      const url = URL.createObjectURL(file);
-      onLogoUpload(url);
-      // Clear text when logo is uploaded
-      setTextInput('');
-      onTextChange('');
+    const allowedTypes = ['image/png', 'image/svg+xml', 'image/webp'];
+    
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload only PNG, SVG, or WebP images with transparent backgrounds.');
+      return;
     }
+    
+    const url = URL.createObjectURL(file);
+    onLogoUpload(url);
+    // Clear text when logo is uploaded
+    setTextInput('');
+    onTextChange('');
   };
 
   const handleClear = () => {
@@ -90,7 +95,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
             Drag & drop logo here
           </p>
           <p className="text-xs text-gray-500 mb-3">
-            PNG, SVG (will be engraved)
+            PNG, SVG, WebP (add images with transparent background)
           </p>
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -101,7 +106,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/png,image/svg+xml,image/jpeg,image/jpg"
+            accept="image/png,image/svg+xml,image/webp"
             onChange={handleFileInput}
             className="hidden"
           />

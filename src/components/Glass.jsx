@@ -122,8 +122,12 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
                     // This is the standard formula for perceived brightness
                     float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
                     
-                    // Apply black and white effect
-                    vec3 bw = vec3(gray);
+                    // Invert the grayscale so dark becomes white and light becomes black
+                    // This ensures dark text/logos appear as white engravings
+                    float inverted = 1.0 - gray;
+                    
+                    // Apply inverted black and white effect
+                    vec3 bw = vec3(inverted);
                     
                     // Keep the original alpha channel for transparency
                     gl_FragColor = vec4(bw, texColor.a);
@@ -206,7 +210,7 @@ function PentagonalPlane({ position, rotation, scale }) {
     )
 }
 
-export function Glass({ stickerUrl = '/tux.png', stickerType, textSticker, bottomLogoUrl = '/tux.png', bottomText, ...props }) {
+export function Glass({ stickerUrl = '/roses.png', stickerType, textSticker, bottomLogoUrl = '/roses.png', bottomText, ...props }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
 
