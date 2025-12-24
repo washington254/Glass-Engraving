@@ -16,7 +16,8 @@ function StickerPlane({
     scale, 
     curveSettings = null,
     onDrop = null,
-    planeId = 'sticker'
+    planeId = 'sticker',
+    isCircle = false
 }) {
     const [texture, setTexture] = useState(null)
     const [isHovering, setIsHovering] = useState(false)
@@ -254,8 +255,15 @@ function StickerPlane({
 
     // Memoize geometry to prevent recreation on every render
     const planeGeom = useMemo(() => {
-        return new THREE.PlaneGeometry(30, 30, curveParams.segments, curveParams.segments)
-    }, [curveParams.segments])
+        if (isCircle) {
+            // Use CircleGeometry for circular stickers (bottom logo)
+            // radius, segments (more segments = smoother circle)
+            return new THREE.CircleGeometry(15, 64)
+        } else {
+            // Use PlaneGeometry for rectangular stickers (front sticker)
+            return new THREE.PlaneGeometry(30, 30, curveParams.segments, curveParams.segments)
+        }
+    }, [isCircle, curveParams.segments])
 
     // Cleanup
     useEffect(() => {
@@ -412,6 +420,7 @@ export function Glass({
                 curveSettings={null}
                 onDrop={onBottomLogoDrop}
                 planeId="bottom-logo"
+                isCircle={true}
             />
         </group>
     )
