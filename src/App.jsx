@@ -31,6 +31,18 @@ function App() {
     setBottomText(text);
   };
 
+  // Handle drag and drop directly on 3D planes
+  const handleFrontStickerDrop = (url, type) => {
+    setStickerUrl(url);
+    setStickerType(type);
+    setTextSticker(''); // Clear text when image is dropped
+  };
+
+  const handleBottomLogoDrop = (url, type) => {
+    setBottomLogoUrl(url);
+    setBottomText(''); // Clear text when image is dropped
+  };
+
   return (
     <>
       <div className="relative w-full h-screen bg-dark">
@@ -46,6 +58,13 @@ function App() {
           onImageUpload={handleImageUpload}
           onTextAdd={handleTextAdd}
         />
+
+        {/* Drag and Drop Instruction */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-900/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-700">
+          <p className="text-sm text-gray-300 text-center">
+            💡 <span className="font-semibold">Tip:</span> Drag images directly onto the glass to apply them!
+          </p>
+        </div>
 
         <Canvas shadows camera={{ position: [0, 2, 8], fov: 50 }}>
           <OrbitControls enableDamping dampingFactor={0.05} />
@@ -72,6 +91,8 @@ function App() {
             textSticker={textSticker}
             bottomLogoUrl={bottomLogoUrl}
             bottomText={bottomText}
+            onFrontStickerDrop={handleFrontStickerDrop}
+            onBottomLogoDrop={handleBottomLogoDrop}
           />
         </Canvas>
       </div>

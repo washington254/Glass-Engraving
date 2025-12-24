@@ -1,14 +1,27 @@
 
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { useControls } from 'leva'
 import { useMaterialStore } from '../store'
 import { GlassMaterial } from './GlassMaterial'
+import { useThree } from '@react-three/fiber'
 
-function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curveSettings = null }) {
+function StickerPlane({ 
+    stickerUrl, 
+    textSticker, 
+    position, 
+    rotation, 
+    scale, 
+    curveSettings = null,
+    onDrop = null,
+    planeId = 'sticker'
+}) {
     const [texture, setTexture] = useState(null)
+    const [isHovering, setIsHovering] = useState(false)
+    const meshRef = useRef()
+    const { camera, gl } = useThree()
 
     // Use provided curve settings or defaults (no curve)
     const curveParams = curveSettings || {
@@ -19,6 +32,89 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
         yRadius: 423,
         yStrength: 2
     }
+
+    // Validate file type
+    const isValidImageFile = (file) => {
+        const allowedTypes = ['image/png', 'image/svg+xml', 'image/webp']
+        return allowedTypes.includes(file.type)
+    }
+
+    // Handle drag and drop on the 3D plane
+    useEffect(() => {
+        if (!onDrop) return
+
+        const canvas = gl.domElement
+        const raycaster = new THREE.Raycaster()
+        const mouse = new THREE.Vector2()
+
+        const handleDragOver = (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            // Check if dragging files
+            if (e.dataTransfer.types.includes('Files')) {
+                // Update mouse position for raycasting
+                const rect = canvas.getBoundingClientRect()
+                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
+
+                // Raycast to check if hovering over this plane
+                raycaster.setFromCamera(mouse, camera)
+                if (meshRef.current) {
+                    const intersects = raycaster.intersectObject(meshRef.current)
+                    setIsHovering(intersects.length > 0)
+                }
+            }
+        }
+
+        const handleDragLeave = (e) => {
+            e.preventDefault()
+            setIsHovering(false)
+        }
+
+        const handleDrop = (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            // Update mouse position for final check
+            const rect = canvas.getBoundingClientRect()
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
+
+            // Raycast to check if dropped on this plane
+            raycaster.setFromCamera(mouse, camera)
+            if (meshRef.current) {
+                const intersects = raycaster.intersectObject(meshRef.current)
+                
+                if (intersects.length > 0) {
+                    const files = e.dataTransfer.files
+                    if (files.length > 0) {
+                        const file = files[0]
+                        
+                        // Validate file type
+                        if (isValidImageFile(file)) {
+                            const url = URL.createObjectURL(file)
+                            onDrop(url, file.type)
+                        } else {
+                            alert('Please upload only PNG, SVG, or WebP images with transparent backgrounds.')
+                        }
+                    }
+                }
+            }
+
+            setIsHovering(false)
+        }
+
+        canvas.addEventListener('dragover', handleDragOver)
+        canvas.addEventListener('dragleave', handleDragLeave)
+        canvas.addEventListener('drop', handleDrop)
+
+        return () => {
+            canvas.removeEventListener('dragover', handleDragOver)
+            canvas.removeEventListener('dragleave', handleDragLeave)
+            canvas.removeEventListener('drop', handleDrop)
+        }
+    }, [camera, gl, onDrop])
 
     useEffect(() => {
         if (textSticker) {
@@ -77,7 +173,8 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
                 strength: { value: curveParams.strength },
                 enabled: { value: curveParams.enabled ? 1.0 : 0.0 },
                 yRadius: { value: curveParams.yRadius },
-                yStrength: { value: curveParams.yStrength }
+                yStrength: { value: curveParams.yStrength },
+                glowIntensity: { value: 0.0 }
             },
             vertexShader: `
                 uniform float radius;
@@ -87,9 +184,11 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
                 uniform float yStrength;
                 
                 varying vec2 vUv;
+                varying vec3 vPosition;
                 
                 void main() {
                     vUv = uv;
+                    vPosition = position;
                     vec3 pos = position;
                     
                     if (enabled > 0.5) {
@@ -113,7 +212,9 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             `,
             fragmentShader: `
                 uniform sampler2D map;
+                uniform float glowIntensity;
                 varying vec2 vUv;
+                varying vec3 vPosition;
                 
                 void main() {
                     vec4 texColor = texture2D(map, vUv);
@@ -129,8 +230,12 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
                     // Apply inverted black and white effect
                     vec3 bw = vec3(inverted);
                     
+                    // Add glow effect when hovering
+                    vec3 glowColor = vec3(0.3, 0.6, 1.0); // Cyan/blue glow
+                    vec3 finalColor = mix(bw, bw + glowColor * 0.5, glowIntensity);
+                    
                     // Keep the original alpha channel for transparency
-                    gl_FragColor = vec4(bw, texColor.a);
+                    gl_FragColor = vec4(finalColor, texColor.a);
                 }
             `,
             transparent: true,
@@ -139,6 +244,13 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
             depthWrite: false
         })
     }, [texture, curveParams]) // Recreate when texture or curve params change
+
+    // Update glow intensity based on hover state
+    useEffect(() => {
+        if (curvedMaterial && curvedMaterial.uniforms.glowIntensity) {
+            curvedMaterial.uniforms.glowIntensity.value = isHovering ? 1.0 : 0.0
+        }
+    }, [isHovering, curvedMaterial])
 
     // Memoize geometry to prevent recreation on every render
     const planeGeom = useMemo(() => {
@@ -160,7 +272,13 @@ function StickerPlane({ stickerUrl, textSticker, position, rotation, scale, curv
     if (!texture || !curvedMaterial) return null
 
     return (
-        <mesh position={position} rotation={rotation} scale={scale} geometry={planeGeom}>
+        <mesh 
+            ref={meshRef}
+            position={position} 
+            rotation={rotation} 
+            scale={scale} 
+            geometry={planeGeom}
+        >
             <primitive object={curvedMaterial} attach="material" />
         </mesh>
     )
@@ -210,7 +328,16 @@ function PentagonalPlane({ position, rotation, scale }) {
     )
 }
 
-export function Glass({ stickerUrl = '/roses.png', stickerType, textSticker, bottomLogoUrl = '/roses.png', bottomText, ...props }) {
+export function Glass({ 
+    stickerUrl = '/roses.png', 
+    stickerType, 
+    textSticker, 
+    bottomLogoUrl = '/roses.png', 
+    bottomText,
+    onFrontStickerDrop,
+    onBottomLogoDrop,
+    ...props 
+}) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
 
@@ -256,6 +383,8 @@ export function Glass({ stickerUrl = '/roses.png', stickerType, textSticker, bot
                 rotation={[0.0, -0., 0.]}
                 scale={[.9, 0.7, 0.9]}
                 curveSettings={frontCurveSettings}
+                onDrop={onFrontStickerDrop}
+                planeId="front-sticker"
             />
 
             {/* Pentagonal plane with glass material - using your aligned values */}
@@ -281,6 +410,8 @@ export function Glass({ stickerUrl = '/roses.png', stickerType, textSticker, bot
                 ]}
                 scale={.6}
                 curveSettings={null}
+                onDrop={onBottomLogoDrop}
+                planeId="bottom-logo"
             />
         </group>
     )
