@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useUIStore } from '../store';
 
 export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   const [isDragging, setIsDragging] = useState(false);
@@ -6,11 +7,15 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed on mobile
   const fileInputRef = useRef(null);
 
+  const { activePanel, setActivePanel } = useUIStore();
+  const isMobile = window.innerWidth < 768;
+
   // Auto-expand on desktop, handle resize
   React.useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsCollapsed(false);
+        setActivePanel(null); // Reset on desktop
       } else {
         setIsCollapsed(true);
       }
@@ -21,7 +26,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [setActivePanel]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -84,18 +89,31 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
     // Only expand if currently collapsed. Do not collapse if expanded (require arrow click).
     if (isCollapsed) {
       setIsCollapsed(false);
+      setActivePanel('bottom');
     }
   };
 
   const handleToggleClick = (e) => {
     e.stopPropagation(); // Prevent container click
-    setIsCollapsed(!isCollapsed);
+    if (isCollapsed) {
+      setIsCollapsed(false);
+      setActivePanel('bottom');
+    } else {
+      setIsCollapsed(true);
+      setActivePanel(null);
+    }
   };
+
+  // Determine visibility classes based on active panel
+  // If we are mobile AND another panel is active, we hide this one visually but keep it mounted
+  const visibilityClass = (isMobile && activePanel === 'sticker')
+    ? 'opacity-0 pointer-events-none -z-10'
+    : 'opacity-100 pointer-events-auto z-10';
 
   return (
     <div
       onClick={handleContainerClick}
-      className={`absolute bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 w-auto z-10 bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default`}
+      className={`absolute bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 w-auto bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
         <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Bottom Logo</h2>
@@ -126,8 +144,8 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all ${isDragging
-                  ? 'border-purple-500 bg-purple-500/10'
-                  : 'border-gray-600 bg-gray-800/50'
+                ? 'border-purple-500 bg-purple-500/10'
+                : 'border-gray-600 bg-gray-800/50'
                 }`}
             >
               <div className="text-center">
