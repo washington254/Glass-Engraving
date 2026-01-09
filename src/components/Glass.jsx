@@ -8,12 +8,12 @@ import { useMaterialStore } from '../store'
 import { GlassMaterial } from './GlassMaterial'
 import { useThree } from '@react-three/fiber'
 
-function StickerPlane({ 
-    stickerUrl, 
-    textSticker, 
-    position, 
-    rotation, 
-    scale, 
+function StickerPlane({
+    stickerUrl,
+    textSticker,
+    position,
+    rotation,
+    scale,
     curveSettings = null,
     onDrop = null,
     planeId = 'sticker',
@@ -86,12 +86,12 @@ function StickerPlane({
             raycaster.setFromCamera(mouse, camera)
             if (meshRef.current) {
                 const intersects = raycaster.intersectObject(meshRef.current)
-                
+
                 if (intersects.length > 0) {
                     const files = e.dataTransfer.files
                     if (files.length > 0) {
                         const file = files[0]
-                        
+
                         // Validate file type
                         if (isValidImageFile(file)) {
                             const url = URL.createObjectURL(file)
@@ -280,11 +280,11 @@ function StickerPlane({
     if (!texture || !curvedMaterial) return null
 
     return (
-        <mesh 
+        <mesh
             ref={meshRef}
-            position={position} 
-            rotation={rotation} 
-            scale={scale} 
+            position={position}
+            rotation={rotation}
+            scale={scale}
             geometry={planeGeom}
         >
             <primitive object={curvedMaterial} attach="material" />
@@ -336,29 +336,29 @@ function PentagonalPlane({ position, rotation, scale }) {
     )
 }
 
-export function Glass({ 
-    stickerUrl = '/roses.png', 
-    stickerType, 
-    textSticker, 
-    bottomLogoUrl = '/roses.png', 
+export function Glass({
+    stickerUrl = '/roses.png',
+    stickerType,
+    textSticker,
+    bottomLogoUrl = '/roses.png',
     bottomText,
     onFrontStickerDrop,
     onBottomLogoDrop,
-    ...props 
+    ...props
 }) {
     const { nodes } = useGLTF('/cup2.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
 
     // Leva controls for bottom sticker plane
-    const bottomStickerControls = useControls('Bottom Sticker', {
-        positionX: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position X' },
-        positionY: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Y' },
-        positionZ: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Z' },
-        rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
-        rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
-        rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
-        scale: { value: 1, min: 0.1, max: 50, step: 0.1, label: 'Scale ' },
-    })
+    // const bottomStickerControls = useControls('Bottom Sticker', {
+    //     positionX: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position X' },
+    //     positionY: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Y' },
+    //     positionZ: { value: 0, min: -10, max: 100, step: 0.01, label: 'Position Z' },
+    //     rotationX: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation X' },
+    //     rotationY: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Y' },
+    //     rotationZ: { value: 0, min: -Math.PI, max: Math.PI, step: 0.01, label: 'Rotation Z' },
+    //     scale: { value: 1, min: 0.1, max: 50, step: 0.1, label: 'Scale ' },
+    // })
 
     // Curve settings for front sticker (hardcoded values from your alignment)
     const frontCurveSettings = {

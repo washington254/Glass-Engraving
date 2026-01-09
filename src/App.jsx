@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
+
+import { Leva } from 'leva';
 
 function App() {
   const [stickerUrl, setStickerUrl] = useState('/roses.png');
@@ -11,6 +13,20 @@ function App() {
   const [textSticker, setTextSticker] = useState('');
   const [bottomLogoUrl, setBottomLogoUrl] = useState('/roses.png');
   const [bottomText, setBottomText] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Listener
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleImageUpload = (url, type) => {
     setStickerUrl(url);
@@ -45,28 +61,29 @@ function App() {
 
   return (
     <>
+      <Leva hidden />
       <div className="relative w-full h-screen bg-dark">
-   
-        
-        <BottomLogoUI 
+
+
+        <BottomLogoUI
           onLogoUpload={handleBottomLogoUpload}
           onTextChange={handleBottomTextChange}
           currentText={bottomText}
         />
 
-        <StickerUI 
+        <StickerUI
           onImageUpload={handleImageUpload}
           onTextAdd={handleTextAdd}
         />
 
         {/* Drag and Drop Instruction */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-900/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-700">
+        <div className="hidden md:block absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-900/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-700">
           <p className="text-sm text-gray-300 text-center">
             💡 <span className="font-semibold">Tip:</span> Drag images directly onto the glass to apply them!
           </p>
         </div>
 
-        <Canvas shadows camera={{ position: [0, 2, 8], fov: 50 }}>
+        <Canvas shadows camera={{ position: [0, 2, isMobile ? 12 : 8], fov: 50 }}>
           <OrbitControls enableDamping dampingFactor={0.05} />
 
           {/* Lighting */}
@@ -76,15 +93,15 @@ function App() {
 
           {/* Environment for reflections - using HDR */}
           <Environment files="/sky.hdr" />
-          
+
           {/* <EngravedCylinder 
             text={cylinderText}
             logoUrl={cylinderLogoUrl}
             position={[0, 0, 0]}
           /> */}
 
-          <Glass 
-            scale={0.08} 
+          <Glass
+            scale={0.08}
             position={[0, -5, 0]}
             stickerUrl={stickerUrl}
             stickerType={stickerType}
