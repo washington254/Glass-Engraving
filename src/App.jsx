@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
+import * as THREE from 'three';
 import { OrbitControls, Environment } from '@react-three/drei';
-import { Glass } from './components/Glass';
+import { VanillaScene } from './components/VanillaScene';
+// import { VanillaGlass } from './components/VanillaGlass';
+// import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
 
@@ -83,35 +86,56 @@ function App() {
           </p>
         </div>
 
-        <Canvas shadows camera={{ position: [0, 2, isMobile ? 12 : 8], fov: 50 }}>
-          <OrbitControls enableDamping dampingFactor={0.05} />
+        <VanillaScene
+          stickerUrl={stickerUrl}
+          textSticker={textSticker}
+          bottomLogoUrl={bottomLogoUrl}
+          bottomText={bottomText}
+          onFrontStickerDrop={handleFrontStickerDrop}
+          onBottomLogoDrop={handleBottomLogoDrop}
+        />
+        {/* <Canvas
+          shadows
+          dpr={[1, 2]}
+          gl={{
+            shadowMap: { enabled: true, type: THREE.PCFShadowMap },
+            toneMapping: THREE.ReinhardToneMapping,
+            toneMappingExposure: 1.5,
+            outputColorSpace: THREE.SRGBColorSpace,
+          }}
+          camera={{ position: [5, 0, -0.05], fov: 35 }}
+        >
+          <OrbitControls 
+            enableDamping 
+            dampingFactor={0.05} 
+            enableZoom={false}
+            enablePan={false}
+            rotateSpeed={0.8}
+            mouseButtons={{
+                LEFT: THREE.MOUSE.ROTATE,
+                MIDDLE: THREE.MOUSE.ROTATE,
+                RIGHT: THREE.MOUSE.ROTATE
+            }}
+          />
 
-          {/* Lighting */}
-          <ambientLight intensity={0.8} />
-          <spotLight position={[5, 5, 5]} intensity={1} castShadow />
-          <spotLight position={[-5, 5, 5]} intensity={0.5} />
 
-          {/* Environment for reflections - using HDR */}
+
+          // Environment for reflections - using HDR
           <Environment files="/sky.hdr" />
 
-          {/* <EngravedCylinder 
-            text={cylinderText}
-            logoUrl={cylinderLogoUrl}
-            position={[0, 0, 0]}
-          /> */}
-
-          <Glass
-            scale={0.08}
-            position={[0, -5, 0]}
-            stickerUrl={stickerUrl}
-            stickerType={stickerType}
-            textSticker={textSticker}
-            bottomLogoUrl={bottomLogoUrl}
-            bottomText={bottomText}
-            onFrontStickerDrop={handleFrontStickerDrop}
-            onBottomLogoDrop={handleBottomLogoDrop}
-          />
-        </Canvas>
+          // <Glass
+          //   scale={0.08}
+          //   position={[0, -5, 0]}
+          //   stickerUrl={stickerUrl}
+          //   stickerType={stickerType}
+          //   textSticker={textSticker}
+          //   bottomLogoUrl={bottomLogoUrl}
+          //   bottomText={bottomText}
+          //   onFrontStickerDrop={handleFrontStickerDrop}
+          //   onBottomLogoDrop={handleBottomLogoDrop}
+          // />
+          <VanillaGlass isMobile={isMobile} />
+        </Canvas> */}
       </div>
     </>
   );
