@@ -174,7 +174,7 @@ export function VanillaScene({
         const gltfLoader = new GLTFLoader();
         gltfLoader.setDRACOLoader(dracoLoader);
 
-        gltfLoader.load("/glass1.glb", (gltf) => {
+        gltfLoader.load("/glass3.glb", (gltf) => {
             const model = gltf.scene;
             const glassGeometry = findGeometry(model);
             if (glassGeometry) {
@@ -243,24 +243,149 @@ export function VanillaScene({
         frontMesh.name = "front_sticker";
         stickerGroup.add(frontMesh);
 
-        // 2. Pentagonal Plane
-        const pentShape = new THREE.Shape();
-        const sides = 5;
-        const radius = 1;
-        for (let i = 0; i < sides; i++) {
-            const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            if (i === 0) pentShape.moveTo(x, y);
-            else pentShape.lineTo(x, y);
-        }
-        pentShape.closePath();
-        const pentGeom = new THREE.ShapeGeometry(pentShape);
-        const pentMesh = new THREE.Mesh(pentGeom, material); // Use same Glass Material
-        pentMesh.position.set(-0.5, 44.2, -4.1);
-        pentMesh.rotation.set(Math.PI / 2, 0, 0);
-        pentMesh.scale.set(12.9, 12.9, 12.9);
-        stickerGroup.add(pentMesh);
+        // 2. Rounded Hexagon Plane
+        const createRoundedHexagon = (radius, cornerRadius) => {
+            const shape = new THREE.Shape();
+            const sides = 6;
+            const angleStep = (Math.PI * 2) / sides;
+
+            // Start point (first corner, offset)
+            // We need to move to a point just before the first vertex to start the loop correctly if we loop all 6
+            // But let's basically do:
+            // For each side i:
+            //   Current Vertex angle: i * step - PI/2
+            //   Next Vertex angle
+            //   We want to draw a line from (currentVertex + offset) to (nextVertex - offset)
+            //   Then curve to (nextVertex + offset)
+
+            // Let's use a simpler approach: iterate vertices
+            const vertices = [];
+            for (let i = 0; i < sides; i++) {
+                const angle = i * angleStep - Math.PI / 2;
+                vertices.push(new THREE.Vector2(Math.cos(angle) * radius, Math.sin(angle) * radius));
+            }
+
+            // Move to start of the first curve (between last and first vertex, close to first)
+            // Actually, let's just use the standard rounded poly algorithm:
+            // moveTo(first_start)
+            // loop vertices: lineTo(corner_start), quadraticCurveTo(corner, corner_end)
+
+            // Since it's a regular hexagon, we can calculate simpler offsets
+            // The distance from vertex to "start of curve" is determined by cornerRadius.
+            // But let's just approximate for visual consistency.
+
+            // We can assume cornerRadius is a factor (0 to 1) of side length?
+            // User just said "rounded edges".
+
+            // Let's try this manual approach for a nice shape:
+            for (let i = 0; i < sides; i++) {
+                const angle = i * angleStep - Math.PI / 2; // -PI/2 to point up? Hexagon usually point up or flat top? 
+                // Pentagon code was - PI/2.
+                // Let's keep rotation consistent.
+
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+
+                // We need previous and next?
+                // No, just define the corners.
+            }
+            // OK, let's just write the shape logic directly without inner loop for cleaner reading:
+
+            // Helper to get point at angle
+            const getPoint = (i) => {
+                const angle = (i / sides) * Math.PI * 2 - Math.PI / 2;
+                return new THREE.Vector2(Math.cos(angle) * radius, Math.sin(angle) * radius);
+            };
+
+            // Corner radius needs to be small enough not to overlap
+            // Side length of hexagon = radius
+            const actualCornerRadius = Math.min(cornerRadius, radius * 0.5);
+
+            // We need to find the points along the edges.
+            // Vector algebra: V = Vertex. PrevV, NextV.
+            // Start of curve = V - (V-PrevV).normalized * r
+            // End of curve = V + (NextV-V).normalized * r
+
+            // Let's do a loop
+            const pts = [];
+            for (let i = 0; i < sides; i++) pts.push(getPoint(i));
+
+            // Start with the last corner's end point to close loop smoothly?
+            // Or just moveTo the first start point.
+
+            // Start point: near vertex 0, on the edge from 0 to 1? 
+            // Better: edge from 5 to 0.
+
+            // Let's interpolate
+            const lerp = (a, b, t) => new THREE.Vector2().copy(a).lerp(b, t);
+            // distance ratio for chamfer/round
+            // For hexagon, side len is radius. we want corner radius.
+            // t = cornerRadius / sideLen roughly.
+            const t = 0.2; // Fixed roundness looks good usually? User wants "Rounded edges". 0.2 is safe.
+
+            const p0 = pts[0];
+            const pPrev = pts[sides - 1];
+            // Point on line Prev->0
+            const start = lerp(p0, pPrev, t);
+
+            shape.moveTo(start.x, start.y);
+
+            for (let i = 0; i < sides; i++) {
+                const current = pts[i];
+                const next = pts[(i + 1) % sides];
+
+                // Point on line Current->Next
+                const end = lerp(current, next, t);
+
+                // Line to start of curve (which is 't' distance from current on Prop->Current, i.e. 1-t from Prev to Current ... wait)
+
+                // Re-think: 
+                // We are at `start` (on Prev->Cur edge).
+                // We want to arrive at `end` (on Cur->Next edge).
+                // The corner is `current`.
+                // BUT `start` as defined above (lerp p0, pPrev, t) is on line 0->5. That's actually 0 towards 5.
+                // We want 0 towards 5? No, we process corner 0. We coming FROM 5.
+
+                // Let's be explicit. 
+                // Corner i. 
+                // Prev Point: P_prev. Next Point: P_next.
+                // Line segment incoming: P_prev -> P_i
+                // Line segment outgoing: P_i -> P_next
+
+                // Start of round: Point on (P_prev -> P_i) at distance d from P_i.
+                // End of round: Point on (P_i -> P_next) at distance d from P_i.
+                // Control point: P_i.
+
+                const currPt = pts[i];
+                const prevPt = pts[(i - 1 + sides) % sides];
+                const nextPt = pts[(i + 1) % sides];
+
+                const v1 = new THREE.Vector2().subVectors(prevPt, currPt).normalize().multiplyScalar(0.2 * radius); // 0.2 radius smoothing
+                const v2 = new THREE.Vector2().subVectors(nextPt, currPt).normalize().multiplyScalar(0.2 * radius);
+
+                const startRound = new THREE.Vector2().addVectors(currPt, v1);
+                const endRound = new THREE.Vector2().addVectors(currPt, v2);
+
+                if (i === 0) {
+                    shape.moveTo(startRound.x, startRound.y);
+                } else {
+                    shape.lineTo(startRound.x, startRound.y);
+                }
+
+                shape.quadraticCurveTo(currPt.x, currPt.y, endRound.x, endRound.y);
+            }
+            shape.closePath();
+            return shape;
+        };
+
+        const hexShape = createRoundedHexagon(1, 0.2);
+        const hexGeom = new THREE.ShapeGeometry(hexShape);
+        const hexMesh = new THREE.Mesh(hexGeom, material); // Use same Glass Material
+        hexMesh.position.set(-0.5, 44.2, -4.1);
+        hexMesh.rotation.set(Math.PI / 2, 0, 0);
+        hexMesh.scale.set(12.9, 12.9, 12.9);
+        hexMesh.name = "hexagon"; // Renamed for clarity in raycasts if added later
+        stickerGroup.add(hexMesh);
 
         // 3. Bottom Sticker
         const bottomGeom = new THREE.CircleGeometry(15, 64);
@@ -437,17 +562,17 @@ export function VanillaScene({
         curveFolder.add(frontMat.uniforms.yRadius, 'value', 0, 1000, 0.1).name('Y Radius');
         curveFolder.add(frontMat.uniforms.yStrength, 'value', 0, 10, 0.01).name('Y Strength');
 
-        // Pentagon Controls
-        const pentFolder = stickersFolder.addFolder('Pentagon');
-        pentFolder.add(pentMesh.position, 'x', -100, 100, 0.01).name('Pos X');
-        pentFolder.add(pentMesh.position, 'y', -100, 100, 0.01).name('Pos Y');
-        pentFolder.add(pentMesh.position, 'z', -100, 100, 0.01).name('Pos Z');
-        pentFolder.add(pentMesh.rotation, 'x', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot X');
-        pentFolder.add(pentMesh.rotation, 'y', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot Y');
-        pentFolder.add(pentMesh.rotation, 'z', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot Z');
-        pentFolder.add(pentMesh.scale, 'x', 0, 100, 0.01).name('Scale X');
-        pentFolder.add(pentMesh.scale, 'y', 0, 100, 0.01).name('Scale Y');
-        pentFolder.add(pentMesh.scale, 'z', 0, 100, 0.01).name('Scale Z');
+        // Hexagon Controls
+        const hexFolder = stickersFolder.addFolder('Hexagon');
+        hexFolder.add(hexMesh.position, 'x', -100, 100, 0.01).name('Pos X');
+        hexFolder.add(hexMesh.position, 'y', -100, 100, 0.01).name('Pos Y');
+        hexFolder.add(hexMesh.position, 'z', -100, 100, 0.01).name('Pos Z');
+        hexFolder.add(hexMesh.rotation, 'x', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot X');
+        hexFolder.add(hexMesh.rotation, 'y', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot Y');
+        hexFolder.add(hexMesh.rotation, 'z', -Math.PI * 2, Math.PI * 2, 0.01).name('Rot Z');
+        hexFolder.add(hexMesh.scale, 'x', 0, 100, 0.01).name('Scale X');
+        hexFolder.add(hexMesh.scale, 'y', 0, 100, 0.01).name('Scale Y');
+        hexFolder.add(hexMesh.scale, 'z', 0, 100, 0.01).name('Scale Z');
 
         // Bottom Sticker Controls
         const bottomFolder = stickersFolder.addFolder('Bottom Sticker');
