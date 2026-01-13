@@ -76,7 +76,8 @@ export function VanillaScene({
     bottomLogoUrl,
     bottomText,
     onFrontStickerDrop,
-    onBottomLogoDrop
+    onBottomLogoDrop,
+    onLoaded
 }) {
     const mountRef = useRef(null);
     const frontStickerMatRef = useRef(null);
@@ -120,14 +121,23 @@ export function VanillaScene({
             opacity: .44,
         };
 
-        const hdrEquirect = new RGBELoader().load(
+        // Loading Manager
+        const manager = new THREE.LoadingManager();
+        if (onLoaded) {
+            manager.onLoad = () => {
+                console.log('All assets loaded');
+                onLoaded();
+            };
+        }
+
+        const hdrEquirect = new RGBELoader(manager).load(
             "/sky.hdr",
             () => {
                 hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
             }
         );
 
-        const textureLoader = new THREE.TextureLoader();
+        const textureLoader = new THREE.TextureLoader(manager);
         const normalMapTexture = textureLoader.load("/normal.jpg");
         normalMapTexture.wrapS = THREE.RepeatWrapping;
         normalMapTexture.wrapT = THREE.RepeatWrapping;
@@ -171,7 +181,7 @@ export function VanillaScene({
         dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
         dracoLoader.setDecoderConfig({ type: 'js' });
 
-        const gltfLoader = new GLTFLoader();
+        const gltfLoader = new GLTFLoader(manager);
         gltfLoader.setDRACOLoader(dracoLoader);
 
         gltfLoader.load("/glass3.glb", (gltf) => {

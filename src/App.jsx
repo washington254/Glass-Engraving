@@ -7,6 +7,7 @@ import { VanillaScene } from './components/VanillaScene';
 // import { Glass } from './components/Glass';
 import { StickerUI } from './components/StickerUI';
 import { BottomLogoUI } from './components/BottomLogoUI';
+import { LoadingScreen } from './components/LoadingScreen';
 
 import { Leva } from 'leva';
 
@@ -17,6 +18,7 @@ function App() {
   const [bottomLogoUrl, setBottomLogoUrl] = useState('/rose.svg');
   const [bottomText, setBottomText] = useState('');
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -62,6 +64,13 @@ function App() {
     setBottomText(''); // Clear text when image is dropped
   };
 
+  const handleLoaded = () => {
+    // Add a small delay for smoother transition
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  };
+
   return (
     <>
       <Leva hidden />
@@ -79,7 +88,8 @@ function App() {
           onTextAdd={handleTextAdd}
         />
 
-        {/* Drag and Drop Instruction */}
+        <LoadingScreen isLoading={isLoading} />
+
         <div className="hidden md:block absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-900/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-700">
           <p className="text-sm text-gray-300 text-center">
             💡 <span className="font-semibold">Tip:</span> Drag images directly onto the glass to apply them!
@@ -93,6 +103,7 @@ function App() {
           bottomText={bottomText}
           onFrontStickerDrop={handleFrontStickerDrop}
           onBottomLogoDrop={handleBottomLogoDrop}
+          onLoaded={handleLoaded}
         />
         {/* <Canvas
           shadows
