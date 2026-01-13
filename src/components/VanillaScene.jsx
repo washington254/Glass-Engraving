@@ -242,8 +242,8 @@ export function VanillaScene({
         });
         frontStickerMatRef.current = frontMat;
         const frontMesh = new THREE.Mesh(frontGeom, frontMat);
-        frontMesh.position.set(-0.056, 76.985, 20.9);
-        frontMesh.scale.set(0.9, 0.7, 0.9);
+        frontMesh.position.set(-0.056, 75.985, 20.9);
+        frontMesh.scale.set(0.7, 0.6, 0.7);
         // frontMesh.rotation.set(0, 0, 0);
         frontMesh.name = "front_sticker";
         stickerGroup.add(frontMesh);

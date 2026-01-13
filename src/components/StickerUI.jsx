@@ -189,40 +189,11 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                 onClick={handleTextSubmit}
                 className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
               >
-                Add Text Sticker
+                Add Text
               </button>
             </div>
 
-            {/* Quick Presets */}
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400 mb-2">Quick Presets:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => onImageUpload('/heart-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ❤️ Heart
-                </button>
-                <button
-                  onClick={() => onImageUpload('/star-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ⭐ Star
-                </button>
-                <button
-                  onClick={() => onImageUpload('/roses.png', 'image/png')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  🐧 Tux
-                </button>
-                <button
-                  onClick={() => onImageUpload('/sample-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  📦 Sample
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
