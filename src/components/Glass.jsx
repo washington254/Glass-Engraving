@@ -331,7 +331,7 @@ function PentagonalPlane({ position, rotation, scale }) {
             rotation={rotation}
             scale={scale}
         >
-            <GlassMaterial mode={performanceMode} />
+            <GlassMaterial mode="quality" />
         </mesh>
     )
 }
@@ -346,7 +346,7 @@ export function Glass({
     onBottomLogoDrop,
     ...props
 }) {
-    const { nodes } = useGLTF('/cup2.glb')
+    const { nodes } = useGLTF('/glass1.glb')
     const performanceMode = useMaterialStore((state) => state.performanceMode)
 
     // Leva controls for bottom sticker plane
@@ -370,20 +370,46 @@ export function Glass({
         yStrength: 2
     }
 
+    // Dynamic geometry finding logic
+    const { scene } = useGLTF('/glass1.glb')
+
+    const glassGeometry = useMemo(() => {
+        let foundGeometry = null
+
+        scene.traverse((node) => {
+            if (foundGeometry) return
+            if (node.isMesh && node.geometry) {
+                foundGeometry = node.geometry.clone()
+            }
+        })
+
+        if (foundGeometry) {
+            // foundGeometry.rotateX(Math.PI / -2)
+            foundGeometry.translate(0, -1, 0)
+        }
+
+        return foundGeometry
+    }, [scene])
+
     return (
         <group {...props} dispose={null}>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.front.geometry}
-                position={[0.056, 3.985, -4.559]}
-                rotation={[0, 0.424, 0]}
-                scale={0.064}
-            >
-                <GlassMaterial mode={performanceMode} />
-            </mesh>
 
-            {/* Front sticker overlay plane - curved to match glass */}
+            <group position={[0, 50, 0]} rotation={[-Math.PI / 2, 0, 0.292]} scale={0.052}>
+                {glassGeometry && (
+                    <mesh
+                        castShadow
+                        receiveShadow
+                        geometry={glassGeometry}
+                        scale={10}
+                    >
+                        <GlassMaterial mode="quality" thickness={4.5} />
+                    </mesh>
+                )}
+            </group>
+
+
+
+            {/* Front sticker overlay plane - curved to match glass
             <StickerPlane
                 stickerUrl={stickerUrl}
                 textSticker={textSticker}
@@ -396,14 +422,14 @@ export function Glass({
             />
 
             {/* Pentagonal plane with glass material - using your aligned values */}
-            <PentagonalPlane
+            {/* <PentagonalPlane
                 position={[-0.5, 39.5, -4.1]}
                 rotation={[Math.PI / 2, 0, 0]}
                 scale={12.9}
-            />
+            /> */}
 
             {/* Bottom sticker plane - flat, positioned on pentagon */}
-            <StickerPlane
+            {/* <StickerPlane
                 stickerUrl={bottomLogoUrl}
                 textSticker={bottomText}
                 position={[
@@ -421,9 +447,9 @@ export function Glass({
                 onDrop={onBottomLogoDrop}
                 planeId="bottom-logo"
                 isCircle={true}
-            />
+            /> */}
         </group>
     )
 }
 
-useGLTF.preload('/cup2.glb')
+useGLTF.preload('/glass1.glb')

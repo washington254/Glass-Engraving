@@ -132,7 +132,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all ${isDragging
-                ? 'border-blue-500 bg-blue-500/10'
+                ? 'border-primary-500 bg-primary-500/10'
                 : 'border-gray-600 bg-gray-800/50'
                 }`}
             >
@@ -158,7 +158,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors"
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
                 >
                   Browse Files
                 </button>
@@ -172,6 +172,14 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               </div>
             </div>
 
+            {/* Clear Button */}
+            <button
+              onClick={() => onImageUpload(null, null)}
+              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors mb-4"
+            >
+              Clear Logo
+            </button>
+
             {/* Text Input */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-gray-300">
@@ -183,46 +191,17 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
                 placeholder="Enter text..."
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               <button
                 onClick={handleTextSubmit}
-                className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm transition-colors"
+                className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
               >
-                Add Text Sticker
+                Add Text
               </button>
             </div>
 
-            {/* Quick Presets */}
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400 mb-2">Quick Presets:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => onImageUpload('/heart-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ❤️ Heart
-                </button>
-                <button
-                  onClick={() => onImageUpload('/star-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ⭐ Star
-                </button>
-                <button
-                  onClick={() => onImageUpload('/roses.png', 'image/png')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  🐧 Tux
-                </button>
-                <button
-                  onClick={() => onImageUpload('/sample-logo.svg', 'image/svg+xml')}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  📦 Sample
-                </button>
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

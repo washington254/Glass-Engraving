@@ -71,7 +71,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   };
 
   const handleClear = () => {
-    onLogoUpload('/tux.png');
+    onLogoUpload(null);
     // Reset to empty text when clearing
     setTextInput('');
     onTextChange('');
@@ -144,7 +144,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all ${isDragging
-                ? 'border-purple-500 bg-purple-500/10'
+                ? 'border-primary-500 bg-primary-500/10'
                 : 'border-gray-600 bg-gray-800/50'
                 }`}
             >
@@ -170,7 +170,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm transition-colors"
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
                 >
                   Browse Files
                 </button>
@@ -187,57 +187,12 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
             {/* Clear Button */}
             <button
               onClick={handleClear}
-              className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm transition-colors"
+              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
             >
               Clear Logo
             </button>
 
-            {/* Quick Presets */}
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400 mb-2">Quick Presets:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => {
-                    onLogoUpload('/heart-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ❤️ Heart
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/star-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ⭐ Star
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/rose.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  rose
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/sample-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  📦 Sample
-                </button>
-              </div>
-            </div>
+
 
             {/* Text Input Section */}
             <div className="mt-4 pt-4 border-t border-gray-700">
@@ -250,11 +205,11 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
                 placeholder="Enter text..."
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm mb-2"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm mb-2"
               />
               <button
                 onClick={handleAddText}
-                className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm transition-colors"
+                className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
               >
                 Add Text
               </button>
