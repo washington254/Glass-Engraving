@@ -14,7 +14,7 @@ function App() {
   const [stickerUrl, setStickerUrl] = useState('/roses.png');
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
-  const [bottomLogoUrl, setBottomLogoUrl] = useState('/roses.png');
+  const [bottomLogoUrl, setBottomLogoUrl] = useState('/rose.svg');
   const [bottomText, setBottomText] = useState('');
   const [isMobile, setIsMobile] = useState(false);
 

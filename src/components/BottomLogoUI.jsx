@@ -71,7 +71,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
   };
 
   const handleClear = () => {
-    onLogoUpload('/tux.png');
+    onLogoUpload(null);
     // Reset to empty text when clearing
     setTextInput('');
     onTextChange('');
@@ -192,52 +192,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
               Clear Logo
             </button>
 
-            {/* Quick Presets */}
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400 mb-2">Quick Presets:</p>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => {
-                    onLogoUpload('/heart-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ❤️ Heart
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/star-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  ⭐ Star
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/rose.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  rose
-                </button>
-                <button
-                  onClick={() => {
-                    onLogoUpload('/sample-logo.svg');
-                    setTextInput('');
-                    onTextChange('');
-                  }}
-                  className="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs transition-colors"
-                >
-                  📦 Sample
-                </button>
-              </div>
-            </div>
+
 
             {/* Text Input Section */}
             <div className="mt-4 pt-4 border-t border-gray-700">

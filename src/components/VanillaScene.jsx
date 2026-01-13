@@ -472,7 +472,7 @@ export function VanillaScene({
             canvas.width = 512; canvas.height = 512;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 512, 512);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#000000';
             ctx.font = 'bold 80px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -496,7 +496,7 @@ export function VanillaScene({
             canvas.width = 512; canvas.height = 512;
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, 512, 512);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#000000';
             ctx.font = 'bold 80px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
