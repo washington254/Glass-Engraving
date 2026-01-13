@@ -92,7 +92,7 @@ function App() {
 
         <div className="hidden md:block absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-gray-900/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-700">
           <p className="text-sm text-gray-300 text-center">
-            💡 <span className="font-semibold">Tip:</span> Drag images directly onto the glass to apply them!
+            💡 <span className="font-semibold">Tip:</span> Drag Image directly onto the bottom Logo to apply it!
           </p>
         </div>
 

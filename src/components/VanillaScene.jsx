@@ -61,9 +61,19 @@ const fragmentShader = `
         // Apply inverted black and white effect
         vec3 bw = vec3(inverted);
         
-        // Add glow effect when hovering
+        // Enhanced glow effect that affects the entire circle
         vec3 glowColor = vec3(0.3, 0.6, 1.0); // Cyan/blue glow
-        vec3 finalColor = mix(bw, bw + glowColor * 0.5, glowIntensity);
+        
+        // Calculate distance from center for radial glow
+        vec2 center = vec2(0.5, 0.5);
+        float dist = distance(vUv, center);
+        float radialGlow = 1.0 - smoothstep(0.0, 0.5, dist);
+        
+        // Combine content glow with radial glow for full circle effect
+        float combinedGlow = max(radialGlow * glowIntensity, glowIntensity * 0.3);
+        
+        // More pronounced glow (increased multiplier from 0.5 to 1.5)
+        vec3 finalColor = mix(bw, bw + glowColor * 1.5, combinedGlow);
         
         // Keep the original alpha channel for transparency
         gl_FragColor = vec4(finalColor, texColor.a);
@@ -199,13 +209,9 @@ export function VanillaScene({
 
                 const glassMesh = new THREE.Mesh(glassGeometry, material);
                 glassMesh.rotation.set(0, 1.85, 0);
-                if (isMobileDevice()) {
-                    glassMesh.scale.set(0.0015, 0.0015, 0.0015);
-                    glassMesh.position.set(0, -.7, 0);
-                } else {
-                    glassMesh.scale.set(0.0023, 0.0023, 0.0023);
-                    glassMesh.position.set(0, -1, 0);
-                }
+                // Use consistent scale and position for both mobile and desktop
+                glassMesh.scale.set(0.0023, 0.0023, 0.0023);
+                glassMesh.position.set(0, -1, 0);
                 scene.add(glassMesh);
             }
 
@@ -288,7 +294,12 @@ export function VanillaScene({
 
         // Camera
         const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 15);
-        camera.position.set(5, 0, 0.0);
+        // Adjust camera Z position for mobile to achieve same visual result
+        if (isMobileDevice()) {
+            camera.position.set(7.5, 0, 0.0); // Move camera back for mobile
+        } else {
+            camera.position.set(5, 0, 0.0);
+        }
         scene.add(camera);
 
         // Renderer

@@ -172,6 +172,14 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               </div>
             </div>
 
+            {/* Clear Button */}
+            <button
+              onClick={() => onImageUpload(null, null)}
+              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors mb-4"
+            >
+              Clear Logo
+            </button>
+
             {/* Text Input */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-gray-300">
