@@ -105,7 +105,7 @@ export function VanillaScene({
 
         // Base
         const gui = new GUI();
-        gui.hide(); // user wants to see controls now
+        //gui.hide(); // user wants to see controls now
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
 
