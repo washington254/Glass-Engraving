@@ -164,7 +164,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
+                  className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
                 >
                   Browse Files
                 </button>
@@ -181,7 +181,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
             {/* Clear Button */}
             <button
               onClick={() => onImageUpload(null, null)}
-              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors mb-4"
+              className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mb-4"
             >
               Clear Logo
             </button>
@@ -201,7 +201,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               />
               <button
                 onClick={handleTextSubmit}
-                className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
+                className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
               >
                 Add Text
               </button>

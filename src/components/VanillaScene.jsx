@@ -114,7 +114,7 @@ export function VanillaScene({
             enableRotation: false,
             color: 0xffffff,
             metalness: 0,
-            roughness: 0.41,
+            roughness: 0.2,
             transmission: 1,
             ior: 1.5,
             reflectivity: 0.5,
@@ -128,8 +128,9 @@ export function VanillaScene({
             bloomThreshold: 0.85,
             bloomStrength: 0.35,
             bloomRadius: 0.33,
-            opacity: .44,
+            opacity: .48,
         };
+
 
         // Loading Manager
         const manager = new THREE.LoadingManager();
@@ -196,11 +197,6 @@ export function VanillaScene({
 
         gltfLoader.load("/glass3.glb", (gltf) => {
             const model = gltf.scene;
-            model.traverse((child) => {
-                if (child.isMesh && child.geometry) {
-                    child.geometry.computeVertexNormals(); // recalculates normals for Three.js
-                }
-            });
 
             const glassGeometry = findGeometry(model);
             if (glassGeometry) {
@@ -210,7 +206,7 @@ export function VanillaScene({
                 const glassMesh = new THREE.Mesh(glassGeometry, material);
                 glassMesh.rotation.set(0, 1.85, 0);
                 // Use consistent scale and position for both mobile and desktop
-                glassMesh.scale.set(0.0023, 0.0023, 0.0023);
+                glassMesh.scale.set(0.023, 0.023, 0.023);
                 glassMesh.position.set(0, -1, 0);
                 scene.add(glassMesh);
             }
@@ -258,7 +254,7 @@ export function VanillaScene({
         });
         frontStickerMatRef.current = frontMat;
         const frontMesh = new THREE.Mesh(frontGeom, frontMat);
-        frontMesh.position.set(-0.056, 75.985, 20.9);
+        frontMesh.position.set(-0.056, 75.985, 21.1);
         frontMesh.scale.set(0.7, 0.6, 0.7);
         // frontMesh.rotation.set(0, 0, 0);
         frontMesh.name = "front_sticker";
@@ -285,7 +281,7 @@ export function VanillaScene({
         });
         bottomStickerMatRef.current = bottomMat;
         const bottomMesh = new THREE.Mesh(bottomGeom, bottomMat);
-        bottomMesh.position.set(0, 45.1, 0);
+        bottomMesh.position.set(0, 44.5, 0);
         bottomMesh.rotation.set(Math.PI / 2, 0, 0);
         bottomMesh.scale.set(0.5, 0.5, 0.5);
         bottomMesh.name = "bottom_sticker";

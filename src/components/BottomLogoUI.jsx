@@ -176,7 +176,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
+                  className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
                 >
                   Browse Files
                 </button>
@@ -193,7 +193,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
             {/* Clear Button */}
             <button
               onClick={handleClear}
-              className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
+              className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
             >
               Clear Logo
             </button>
@@ -215,7 +215,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
               />
               <button
                 onClick={handleAddText}
-                className="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-sm transition-colors"
+                className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
               >
                 Add Text
               </button>
