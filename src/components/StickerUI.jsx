@@ -65,6 +65,12 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
 
     const url = URL.createObjectURL(file);
     onImageUpload(url, file.type);
+
+    // Auto-collapse on mobile after successful upload
+    if (isMobile) {
+      setIsCollapsed(true);
+      setActivePanel(null);
+    }
   };
 
   const handleTextSubmit = () => {

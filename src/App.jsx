@@ -74,7 +74,7 @@ function App() {
   return (
     <>
       <Leva hidden />
-      <div className="relative w-full h-screen bg-dark">
+      <div className="relative w-full h-dvh bg-dark">
 
 
         <BottomLogoUI

@@ -68,6 +68,12 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
     // Clear text when logo is uploaded
     setTextInput('');
     onTextChange('');
+
+    // Auto-collapse on mobile after successful upload
+    if (isMobile) {
+      setIsCollapsed(true);
+      setActivePanel(null);
+    }
   };
 
   const handleClear = () => {
