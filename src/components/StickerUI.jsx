@@ -107,7 +107,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
   return (
     <div
       onClick={handleContainerClick}
-      className={`absolute top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 w-auto bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
+      className={`absolute top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 w-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
         <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Front Logo</h2>
