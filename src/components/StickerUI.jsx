@@ -76,6 +76,11 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
   const handleTextSubmit = () => {
     if (textInput.trim()) {
       onTextAdd(textInput);
+      // Auto-collapse on mobile after adding text
+      if (isMobile) {
+        setIsCollapsed(true);
+        setActivePanel(null);
+      }
     }
   };
 
@@ -107,7 +112,7 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
   return (
     <div
       onClick={handleContainerClick}
-      className={`absolute top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 w-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
+      className={`absolute top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 w-auto max-h-[100dvh] overflow-y-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
         <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Front Logo</h2>
@@ -180,7 +185,13 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
 
             {/* Clear Button */}
             <button
-              onClick={() => onImageUpload(null, null)}
+              onClick={() => {
+                onImageUpload(null, null);
+                if (isMobile) {
+                  setIsCollapsed(true);
+                  setActivePanel(null);
+                }
+              }}
               className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mb-4"
             >
               Clear Logo
@@ -193,6 +204,8 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
                   const isMobile = cameraControls.isMobileDevice();
                   if (isMobile) {
                     cameraControls.animateToPosition(7.5, 0, 0.0);
+                    setIsCollapsed(true);
+                    setActivePanel(null);
                   } else {
                     cameraControls.animateToPosition(5, 0, 0.0);
                   }

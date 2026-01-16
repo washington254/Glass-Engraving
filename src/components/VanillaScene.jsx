@@ -285,7 +285,7 @@ export function VanillaScene({
         const bottomMesh = new THREE.Mesh(bottomGeom, bottomMat);
         bottomMesh.position.set(0, 44.5, 0);
         bottomMesh.rotation.set(Math.PI / 2, 0, 0);
-        bottomMesh.scale.set(0.5, 0.5, 0.5);
+        bottomMesh.scale.set(0.55, 0.55, 0.55);
         bottomMesh.name = "bottom_sticker";
         stickerGroup.add(bottomMesh);
 

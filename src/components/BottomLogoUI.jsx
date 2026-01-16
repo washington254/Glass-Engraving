@@ -81,6 +81,11 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
     // Reset to empty text when clearing
     setTextInput('');
     onTextChange('');
+
+    if (isMobile) {
+      setIsCollapsed(true);
+      setActivePanel(null);
+    }
   };
 
   const handleAddText = () => {
@@ -88,6 +93,11 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
       onTextChange(textInput);
       // Clear logo when text is added
       onLogoUpload(null);
+
+      if (isMobile) {
+        setIsCollapsed(true);
+        setActivePanel(null);
+      }
     }
   };
 
@@ -119,7 +129,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
   return (
     <div
       onClick={handleContainerClick}
-      className={`absolute bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 w-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
+      className={`absolute bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 w-auto max-h-[100dvh] overflow-y-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
         <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Bottom Logo</h2>
@@ -212,6 +222,8 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
 
                   if (isMobile) {
                     cameraControls.animateCamera(mobilePos, mobileRot);
+                    setIsCollapsed(true);
+                    setActivePanel(null);
                   } else {
                     cameraControls.animateCamera(desktopPos, desktopRot);
                   }
