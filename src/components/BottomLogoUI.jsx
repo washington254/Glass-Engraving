@@ -201,11 +201,20 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
             {/* View Button */}
             <button
               onClick={() => {
-                if (cameraControls && cameraControls.animateToPosition) {
+                if (cameraControls && cameraControls.animateCamera) {
                   const isMobile = cameraControls.isMobileDevice();
 
-                  const yPosition = isMobile ? -6 : -5;
-                  cameraControls.animateToPosition(0, yPosition, 0);
+                  const desktopPos = { x: 1.5728234078313186e-9, y: -4.999999999999391, z: -0.0000024799674587004305 };
+                  const desktopRot = { x: 1.5707968227671396, y: 3.1455138493896584e-10, z: -1.5701755915298454 };
+
+                  const mobilePos = { x: -1.991051796165045e-8, y: -6, z: -5.908035291009069e-10 };
+                  const mobileRot = { x: 1.5707963268933638, y: -3.3184195391555704e-9, z: -1.551086097017832 };
+
+                  if (isMobile) {
+                    cameraControls.animateCamera(mobilePos, mobileRot);
+                  } else {
+                    cameraControls.animateCamera(desktopPos, desktopRot);
+                  }
                 }
               }}
               className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mt-4"

@@ -300,6 +300,7 @@ export function VanillaScene({
         }
         scene.add(camera);
 
+
         // Controls
         const controls = new TrackballControls(camera, canvas);
         controls.enableDamping = true;
@@ -330,14 +331,39 @@ export function VanillaScene({
                         duration,
                         ease: 'power2.inOut',
                         onComplete: () => {
-                            // If lookAtTarget is provided, set camera to look at it
-                            if (lookAtTarget) {
-                                camera.lookAt(lookAtTarget.x, lookAtTarget.y, lookAtTarget.z);
-                            }
-                            // Re-enable controls after animation
                             controls.enabled = true;
                         }
                     });
+                },
+                animateCamera: (targetPosition, targetRotation, duration = 1.5) => {
+                    controls.enabled = false;
+
+                    const tl = gsap.timeline({
+                        onComplete: () => {
+                            controls.enabled = true;
+                            controls.update();
+                        }
+                    });
+
+                    if (targetPosition) {
+                        tl.to(camera.position, {
+                            x: targetPosition.x,
+                            y: targetPosition.y,
+                            z: targetPosition.z,
+                            duration,
+                            ease: 'power2.inOut'
+                        }, 0);
+                    }
+
+                    if (targetRotation) {
+                        tl.to(camera.rotation, {
+                            x: targetRotation.x,
+                            y: targetRotation.y,
+                            z: targetRotation.z,
+                            duration,
+                            ease: 'power2.inOut'
+                        }, 0);
+                    }
                 }
             });
         }
@@ -494,6 +520,9 @@ export function VanillaScene({
         const tick = () => {
             controls.update();
             renderer.render(scene, camera);
+
+            // console.log(camera.position, "camera position");
+            // console.log(camera.rotation, "camera rotation");
             animationId = window.requestAnimationFrame(tick);
         };
         tick();
@@ -580,17 +609,17 @@ export function VanillaScene({
                 canvas.width = size;
                 canvas.height = size;
                 const ctx = canvas.getContext('2d');
-                
+
                 // Clear canvas (transparent background)
                 ctx.clearRect(0, 0, size, size);
-                
-     
-                const scaleFactor = 0.9; 
-                
+
+
+                const scaleFactor = 0.9;
+
                 // Calculate dimensions maintaining aspect ratio
                 const imageAspect = img.width / img.height;
                 let drawWidth, drawHeight;
-                
+
                 if (imageAspect > 1) {
                     // Image is wider
                     drawWidth = size * scaleFactor;
@@ -600,14 +629,14 @@ export function VanillaScene({
                     drawHeight = size * scaleFactor;
                     drawWidth = drawHeight * imageAspect;
                 }
-                
+
                 // Center the image
                 const x = (size - drawWidth) / 2;
                 const y = (size - drawHeight) / 2;
-                
+
                 // Draw the image scaled down and centered
                 ctx.drawImage(img, x, y, drawWidth, drawHeight);
-                
+
                 // Create texture from canvas
                 const tex = new THREE.CanvasTexture(canvas);
                 bottomStickerMatRef.current.uniforms.map.value = tex;
