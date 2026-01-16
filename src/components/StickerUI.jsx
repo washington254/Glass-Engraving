@@ -207,6 +207,34 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               </button>
             </div>
 
+            {/* Preset Images */}
+            <div className="mt-4 pt-4 border-t border-gray-700">
+              <label className="block text-sm font-medium text-gray-300 mb-3">
+                Or Choose a Preset
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {['1A.webp', '2A.webp', '3A.webp', '4A.webp'].map((preset) => (
+                  <button
+                    key={preset}
+                    onClick={() => {
+                      onImageUpload(`/${preset}`, 'image/webp');
+                      // Auto-collapse on mobile after preset selection
+                      if (isMobile) {
+                        setIsCollapsed(true);
+                        setActivePanel(null);
+                      }
+                    }}
+                    className="aspect-square rounded-lg overflow-hidden border-2 border-gray-600 hover:border-primary-500 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  >
+                    <img
+                      src={`/${preset}`}
+                      alt={`Preset ${preset.replace('.webp', '')}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
 
           </div>
         </div>
