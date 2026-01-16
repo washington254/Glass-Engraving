@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useUIStore } from '../store';
 
-export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
+export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cameraControls }) {
   const [isDragging, setIsDragging] = useState(false);
   const [textInput, setTextInput] = useState(currentText);
   const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed on mobile
@@ -198,6 +198,23 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
               Clear Logo
             </button>
 
+            {/* View Button */}
+            <button
+              onClick={() => {
+                if (cameraControls && cameraControls.animateToPosition) {
+                  const isMobile = cameraControls.isMobileDevice();
+                  // Position camera below the glass looking up to see the bottom
+                  // Use different distances for mobile vs desktop
+                  const yPosition = isMobile ? -6 : -5;
+                  const lookAtTarget = { x: 0, y: 0, z: 0 }; // Look at the center of the glass
+                  cameraControls.animateToPosition(0, yPosition, 0, lookAtTarget);
+                }
+              }}
+              className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mt-4"
+            >
+              View Point
+            </button>
+
 
 
             {/* Text Input Section */}
@@ -227,7 +244,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
                 Or Choose a Preset
               </label>
               <div className="grid grid-cols-4 gap-2">
-                {['1B.webp', '2B.webp', '3B.webp', '4B.webp'].map((preset) => (
+                {['1B.webp', '2B.webp', '3B.webp', '4B.webp'].map((preset, index) => (
                   <button
                     key={preset}
                     onClick={() => {
@@ -241,12 +258,12 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '' }) {
                         setActivePanel(null);
                       }
                     }}
-                    className="aspect-square rounded-lg overflow-hidden border-2 border-gray-600 hover:border-primary-500 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className={`aspect-square rounded-lg overflow-hidden border-2 border-gray-600 hover:border-primary-500 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 ${index === 0 ? 'bg-white' : ''}`}
                   >
                     <img
                       src={`/${preset}`}
                       alt={`Preset ${preset.replace('.webp', '')}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </button>
                 ))}

@@ -19,6 +19,7 @@ function App() {
   const [bottomText, setBottomText] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [cameraControls, setCameraControls] = useState(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -71,6 +72,10 @@ function App() {
     }, 500);
   };
 
+  const handleCameraReady = (controls) => {
+    setCameraControls(controls);
+  };
+
   return (
     <>
       <Leva hidden />
@@ -81,11 +86,13 @@ function App() {
           onLogoUpload={handleBottomLogoUpload}
           onTextChange={handleBottomTextChange}
           currentText={bottomText}
+          cameraControls={cameraControls}
         />
 
         <StickerUI
           onImageUpload={handleImageUpload}
           onTextAdd={handleTextAdd}
+          cameraControls={cameraControls}
         />
 
         <LoadingScreen isLoading={isLoading} />
@@ -104,6 +111,7 @@ function App() {
           onFrontStickerDrop={handleFrontStickerDrop}
           onBottomLogoDrop={handleBottomLogoDrop}
           onLoaded={handleLoaded}
+          onCameraReady={handleCameraReady}
         />
         {/* <Canvas
           shadows

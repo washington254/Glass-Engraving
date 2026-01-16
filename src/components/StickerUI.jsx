@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useUIStore } from '../store';
 
-export function StickerUI({ onImageUpload, onTextAdd }) {
+export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
   const [isDragging, setIsDragging] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed on mobile
@@ -186,6 +186,23 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
               Clear Logo
             </button>
 
+            {/* View Button */}
+            <button
+              onClick={() => {
+                if (cameraControls && cameraControls.animateToPosition) {
+                  const isMobile = cameraControls.isMobileDevice();
+                  if (isMobile) {
+                    cameraControls.animateToPosition(7.5, 0, 0.0);
+                  } else {
+                    cameraControls.animateToPosition(5, 0, 0.0);
+                  }
+                }
+              }}
+              className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mb-4"
+            >
+              View Point
+            </button>
+
             {/* Text Input */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-gray-300">
@@ -213,7 +230,7 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                 Or Choose a Preset
               </label>
               <div className="grid grid-cols-4 gap-2">
-                {['1A.webp', '2A.webp', '3A.webp', '4A.webp'].map((preset) => (
+                {['1A.webp', '2A.webp', '3A.webp', 'logo.webp'].map((preset, index, array) => (
                   <button
                     key={preset}
                     onClick={() => {
@@ -224,12 +241,12 @@ export function StickerUI({ onImageUpload, onTextAdd }) {
                         setActivePanel(null);
                       }
                     }}
-                    className="aspect-square rounded-lg overflow-hidden border-2 border-gray-600 hover:border-primary-500 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className={`aspect-square rounded-lg overflow-hidden border-2 border-gray-600 hover:border-primary-500 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 ${index === 0 ? 'bg-white' : ''}`}
                   >
                     <img
                       src={`/${preset}`}
                       alt={`Preset ${preset.replace('.webp', '')}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </button>
                 ))}

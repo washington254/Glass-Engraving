@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
+import gsap from 'gsap';
 
 // Shaders from StickerPlane
 const vertexShader = `
@@ -87,7 +88,8 @@ export function VanillaScene({
     bottomText,
     onFrontStickerDrop,
     onBottomLogoDrop,
-    onLoaded
+    onLoaded,
+    onCameraReady
 }) {
     const mountRef = useRef(null);
     const frontStickerMatRef = useRef(null);
@@ -255,7 +257,7 @@ export function VanillaScene({
         frontStickerMatRef.current = frontMat;
         const frontMesh = new THREE.Mesh(frontGeom, frontMat);
         frontMesh.position.set(-0.056, 75.985, 21.5);
-        frontMesh.scale.set(0.7, 0.45, 0.7);
+        frontMesh.scale.set(0.8, 0.5, 0.8);
         // frontMesh.rotation.set(0, 0, 0);
         frontMesh.name = "front_sticker";
         stickerGroup.add(frontMesh);
@@ -298,6 +300,48 @@ export function VanillaScene({
         }
         scene.add(camera);
 
+        // Controls
+        const controls = new TrackballControls(camera, canvas);
+        controls.enableDamping = true;
+        controls.noZoom = true;
+        controls.noPan = true;
+        controls.mouseButtons = {
+            LEFT: THREE.MOUSE.ROTATE,
+            MIDDLE: THREE.MOUSE.ROTATE,
+            RIGHT: THREE.MOUSE.ROTATE,
+        };
+        controls.rotateSpeed = 0.8;
+
+        // Expose camera to parent component
+        if (onCameraReady) {
+            onCameraReady({
+                camera,
+                controls,
+                isMobileDevice,
+                animateToPosition: (x, y, z, lookAtTarget = null, duration = 1.5) => {
+                    // Disable controls during animation
+                    controls.enabled = false;
+
+                    // Animate position only
+                    gsap.to(camera.position, {
+                        x,
+                        y,
+                        z,
+                        duration,
+                        ease: 'power2.inOut',
+                        onComplete: () => {
+                            // If lookAtTarget is provided, set camera to look at it
+                            if (lookAtTarget) {
+                                camera.lookAt(lookAtTarget.x, lookAtTarget.y, lookAtTarget.z);
+                            }
+                            // Re-enable controls after animation
+                            controls.enabled = true;
+                        }
+                    });
+                }
+            });
+        }
+
         // Renderer
         const renderer = new THREE.WebGLRenderer({
             canvas: canvas,
@@ -311,18 +355,6 @@ export function VanillaScene({
         renderer.toneMappingExposure = 1.5;
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Controls
-        const controls = new TrackballControls(camera, canvas);
-        controls.enableDamping = true;
-        controls.noZoom = true;
-        controls.noPan = true;
-        controls.mouseButtons = {
-            LEFT: THREE.MOUSE.ROTATE,
-            MIDDLE: THREE.MOUSE.ROTATE,
-            RIGHT: THREE.MOUSE.ROTATE,
-        };
-        controls.rotateSpeed = 0.8;
 
         // Raycaster Interactions
         const raycaster = new THREE.Raycaster();
