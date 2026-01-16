@@ -254,8 +254,8 @@ export function VanillaScene({
         });
         frontStickerMatRef.current = frontMat;
         const frontMesh = new THREE.Mesh(frontGeom, frontMat);
-        frontMesh.position.set(-0.056, 75.985, 21.1);
-        frontMesh.scale.set(0.7, 0.6, 0.7);
+        frontMesh.position.set(-0.056, 75.985, 21.5);
+        frontMesh.scale.set(0.7, 0.45, 0.7);
         // frontMesh.rotation.set(0, 0, 0);
         frontMesh.name = "front_sticker";
         stickerGroup.add(frontMesh);
@@ -498,6 +498,23 @@ export function VanillaScene({
             frontStickerMatRef.current.uniforms.map.value = tex;
         } else if (stickerUrl) {
             new THREE.TextureLoader().load(stickerUrl, (tex) => {
+                // Calculate aspect ratios for object-contain behavior
+                const imageAspect = tex.image.width / tex.image.height;
+                const planeAspect = 1; // PlaneGeometry is square (30x30)
+
+                // Adjust UV mapping to contain the image (like CSS object-fit: contain)
+                if (imageAspect > planeAspect) {
+                    // Image is wider - fit to width, letterbox top/bottom
+                    const scale = planeAspect / imageAspect;
+                    tex.repeat.set(1, scale);
+                    tex.offset.set(0, (1 - scale) / 2);
+                } else {
+                    // Image is taller - fit to height, pillarbox left/right
+                    const scale = imageAspect / planeAspect;
+                    tex.repeat.set(scale, 1);
+                    tex.offset.set((1 - scale) / 2, 0);
+                }
+
                 frontStickerMatRef.current.uniforms.map.value = tex;
                 frontStickerMatRef.current.needsUpdate = true;
             });
@@ -522,6 +539,23 @@ export function VanillaScene({
             bottomStickerMatRef.current.uniforms.map.value = tex;
         } else if (bottomLogoUrl) {
             new THREE.TextureLoader().load(bottomLogoUrl, (tex) => {
+                // Calculate aspect ratios for object-contain behavior
+                const imageAspect = tex.image.width / tex.image.height;
+                const circleAspect = 1; // CircleGeometry is square (1:1 aspect ratio)
+
+                // Adjust UV mapping to contain the image (like CSS object-fit: contain)
+                if (imageAspect > circleAspect) {
+                    // Image is wider - fit to width, letterbox top/bottom
+                    const scale = circleAspect / imageAspect;
+                    tex.repeat.set(1, scale);
+                    tex.offset.set(0, (1 - scale) / 2);
+                } else {
+                    // Image is taller - fit to height, pillarbox left/right
+                    const scale = imageAspect / circleAspect;
+                    tex.repeat.set(scale, 1);
+                    tex.offset.set((1 - scale) / 2, 0);
+                }
+
                 bottomStickerMatRef.current.uniforms.map.value = tex;
                 bottomStickerMatRef.current.needsUpdate = true;
             });
