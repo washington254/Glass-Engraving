@@ -12,10 +12,10 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { Leva } from 'leva';
 
 function App() {
-  const [stickerUrl, setStickerUrl] = useState('/roses.png');
+  const [stickerUrl, setStickerUrl] = useState('/logo.webp');
   const [stickerType, setStickerType] = useState(null);
   const [textSticker, setTextSticker] = useState('');
-  const [bottomLogoUrl, setBottomLogoUrl] = useState('/rose.svg');
+  const [bottomLogoUrl, setBottomLogoUrl] = useState('/4B.webp');
   const [bottomText, setBottomText] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
