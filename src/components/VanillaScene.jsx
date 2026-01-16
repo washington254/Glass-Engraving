@@ -570,27 +570,50 @@ export function VanillaScene({
             const tex = new THREE.CanvasTexture(canvas);
             bottomStickerMatRef.current.uniforms.map.value = tex;
         } else if (bottomLogoUrl) {
-            new THREE.TextureLoader().load(bottomLogoUrl, (tex) => {
-                // Calculate aspect ratios for object-contain behavior
-                const imageAspect = tex.image.width / tex.image.height;
-                const circleAspect = 1; // CircleGeometry is square (1:1 aspect ratio)
-
-                // Adjust UV mapping to contain the image (like CSS object-fit: contain)
-                if (imageAspect > circleAspect) {
-                    // Image is wider - fit to width, letterbox top/bottom
-                    const scale = circleAspect / imageAspect;
-                    tex.repeat.set(1, scale);
-                    tex.offset.set(0, (1 - scale) / 2);
+            // Load the image first
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                // Create a canvas to draw the scaled image with padding
+                const canvas = document.createElement('canvas');
+                const size = 512;
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                // Clear canvas (transparent background)
+                ctx.clearRect(0, 0, size, size);
+                
+     
+                const scaleFactor = 0.9; 
+                
+                // Calculate dimensions maintaining aspect ratio
+                const imageAspect = img.width / img.height;
+                let drawWidth, drawHeight;
+                
+                if (imageAspect > 1) {
+                    // Image is wider
+                    drawWidth = size * scaleFactor;
+                    drawHeight = drawWidth / imageAspect;
                 } else {
-                    // Image is taller - fit to height, pillarbox left/right
-                    const scale = imageAspect / circleAspect;
-                    tex.repeat.set(scale, 1);
-                    tex.offset.set((1 - scale) / 2, 0);
+                    // Image is taller or square
+                    drawHeight = size * scaleFactor;
+                    drawWidth = drawHeight * imageAspect;
                 }
-
+                
+                // Center the image
+                const x = (size - drawWidth) / 2;
+                const y = (size - drawHeight) / 2;
+                
+                // Draw the image scaled down and centered
+                ctx.drawImage(img, x, y, drawWidth, drawHeight);
+                
+                // Create texture from canvas
+                const tex = new THREE.CanvasTexture(canvas);
                 bottomStickerMatRef.current.uniforms.map.value = tex;
                 bottomStickerMatRef.current.needsUpdate = true;
-            });
+            };
+            img.src = bottomLogoUrl;
         } else {
             bottomStickerMatRef.current.uniforms.map.value = null;
         }

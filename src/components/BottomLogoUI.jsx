@@ -203,11 +203,9 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
               onClick={() => {
                 if (cameraControls && cameraControls.animateToPosition) {
                   const isMobile = cameraControls.isMobileDevice();
-                  // Position camera below the glass looking up to see the bottom
-                  // Use different distances for mobile vs desktop
+
                   const yPosition = isMobile ? -6 : -5;
-                  const lookAtTarget = { x: 0, y: 0, z: 0 }; // Look at the center of the glass
-                  cameraControls.animateToPosition(0, yPosition, 0, lookAtTarget);
+                  cameraControls.animateToPosition(0, yPosition, 0);
                 }
               }}
               className="w-full px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors mt-4"
