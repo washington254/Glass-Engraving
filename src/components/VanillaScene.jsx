@@ -334,6 +334,15 @@ export function VanillaScene({
                             controls.enabled = true;
                         }
                     });
+
+                    // Reset up vector to default to prevent roll
+                    gsap.to(camera.up, {
+                        x: 0,
+                        y: 1,
+                        z: 0,
+                        duration,
+                        ease: 'power2.inOut'
+                    });
                 },
                 animateCamera: (targetPosition, targetRotation, duration = 1.5) => {
                     controls.enabled = false;
@@ -356,12 +365,26 @@ export function VanillaScene({
                     }
 
                     if (targetRotation) {
+                        // Animate rotation
                         tl.to(camera.rotation, {
                             x: targetRotation.x,
                             y: targetRotation.y,
                             z: targetRotation.z,
                             duration,
                             ease: 'power2.inOut'
+                        }, 0);
+
+                        // Calculate and animate the UP vector to match the target rotation
+                        // This prevents the "twitch" at the end when controls take over
+                        const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(targetRotation.x, targetRotation.y, targetRotation.z));
+                        const newUp = new THREE.Vector3(0, 1, 0).applyQuaternion(q).normalize();
+
+                        tl.to(camera.up, {
+                            x: newUp.x,
+                            y: newUp.y,
+                            z: newUp.z,
+                            duration,
+                            ease: 'power2.inOut' // Sync easing with other animations
                         }, 0);
                     }
                 }
