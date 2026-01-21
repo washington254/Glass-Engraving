@@ -8,7 +8,6 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import GUI from 'lil-gui';
 import gsap from 'gsap';
 
-// Shaders from StickerPlane
 const vertexShader = `
     uniform float radius;
     uniform float strength;
@@ -25,7 +24,6 @@ const vertexShader = `
         vec3 pos = position;
         
         if (enabled > 0.5) {
-            // Apply cylindrical curve along X axis
             float angle = pos.x / radius * strength;
             float newZ = -radius * (1.0 - cos(angle));
             float newX = radius * sin(angle);
@@ -33,7 +31,6 @@ const vertexShader = `
             pos.x = newX;
             pos.z += newZ;
             
-            // Apply slight curve along Y axis (top/bottom)
             float yAngle = pos.y / yRadius * yStrength;
             float yNewZ = -yRadius * (1.0 - cos(yAngle));
             
@@ -53,30 +50,22 @@ const fragmentShader = `
     void main() {
         vec4 texColor = texture2D(map, vUv);
         
-        // Convert to grayscale using luminance formula
         float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
         
-        // Invert the grayscale
         float inverted = 1.0 - gray;
         
-        // Apply inverted black and white effect
         vec3 bw = vec3(inverted);
         
-        // Enhanced glow effect that affects the entire circle
-        vec3 glowColor = vec3(0.3, 0.6, 1.0); // Cyan/blue glow
+        vec3 glowColor = vec3(0.3, 0.6, 1.0);
         
-        // Calculate distance from center for radial glow
         vec2 center = vec2(0.5, 0.5);
         float dist = distance(vUv, center);
         float radialGlow = 1.0 - smoothstep(0.0, 0.5, dist);
         
-        // Combine content glow with radial glow for full circle effect
         float combinedGlow = max(radialGlow * glowIntensity, glowIntensity * 0.3);
         
-        // More pronounced glow (increased multiplier from 0.5 to 1.5)
         vec3 finalColor = mix(bw, bw + glowColor * 1.5, combinedGlow);
         
-        // Keep the original alpha channel for transparency
         gl_FragColor = vec4(finalColor, texColor.a);
     }
 `;
@@ -257,7 +246,7 @@ export function VanillaScene({
         frontStickerMatRef.current = frontMat;
         const frontMesh = new THREE.Mesh(frontGeom, frontMat);
         frontMesh.position.set(-0.056, 75.985, 21.5);
-        frontMesh.scale.set(0.8, 0.5, 0.8);
+        frontMesh.scale.set(0.9, 0.5, 0.9);
         // frontMesh.rotation.set(0, 0, 0);
         frontMesh.name = "front_sticker";
         stickerGroup.add(frontMesh);
@@ -285,7 +274,7 @@ export function VanillaScene({
         const bottomMesh = new THREE.Mesh(bottomGeom, bottomMat);
         bottomMesh.position.set(0, 44.5, 0);
         bottomMesh.rotation.set(Math.PI / 2, 0, 0);
-        bottomMesh.scale.set(0.55, 0.55, 0.55);
+        bottomMesh.scale.set(0.5, 0.5, 0.5);
         bottomMesh.name = "bottom_sticker";
         stickerGroup.add(bottomMesh);
 

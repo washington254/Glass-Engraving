@@ -115,7 +115,7 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
       className={`absolute top-4 left-4 right-4 md:left-auto md:right-4 md:w-80 w-auto max-h-[100dvh] overflow-y-auto ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm rounded-lg shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'p-4' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
-        <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Front Logo</h2>
+        <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Laser Etching Front Logo</h2>
 
         {/* Toggle Button - Only visible on mobile */}
         <button
@@ -142,14 +142,14 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all ${isDragging
-                ? 'border-primary-500 bg-primary-500/10'
-                : 'border-gray-600 bg-gray-800/50'
+              className={`rounded-lg mb-4 transition-all ${isDragging
+                ? 'border-2 border-dashed border-primary-500 bg-primary-500/10 p-8'
+                : 'md:border-2 md:border-dashed border-transparent md:border-gray-600 bg-transparent md:bg-gray-800/50 p-0 md:p-8'
                 }`}
             >
               <div className="text-center">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400 mb-2"
+                  className="mx-auto h-12 w-12 text-gray-400 mb-2 hidden md:block"
                   stroke="currentColor"
                   fill="none"
                   viewBox="0 0 48 48"
@@ -161,15 +161,15 @@ export function StickerUI({ onImageUpload, onTextAdd, cameraControls }) {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <p className="text-sm text-gray-300 mb-2">
+                <p className="text-sm text-gray-300 mb-2 hidden md:block">
                   Drag & drop image here
                 </p>
-                <p className="text-xs text-gray-500 mb-3">
+                <p className="text-xs text-gray-500 mb-3 hidden md:block">
                   PNG, SVG, WebP (with transparency)
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
+                  className="w-full md:w-auto px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white rounded-md text-sm transition-colors"
                 >
                   Browse Files
                 </button>
