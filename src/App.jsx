@@ -81,6 +81,12 @@ function App() {
       <Leva hidden />
       <div className="relative w-full h-dvh overflow-hidden bg-dark">
 
+        {/* Title */}
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20">
+          <h1 className="text-xl md:text-2xl no-wrap font-bold text-white">
+            Flagship Tumbler
+          </h1>
+        </div>
 
         <BottomLogoUI
           onLogoUpload={handleBottomLogoUpload}

@@ -182,7 +182,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
                   Drag & drop logo here
                 </p>
                 <p className="text-xs text-gray-500 mb-3 hidden md:block">
-                  PNG, SVG, WebP (add images with transparent background)
+                  Optimize logo with logo optimizer
                 </p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -237,7 +237,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
 
 
             {/* Text Input Section */}
-            <div className="mt-4 pt-4 border-t border-gray-700">
+            <div className="mt-4 pb-2">
               <label className="block text-sm text-gray-300 mb-2">
                 Or Add Text
               </label>
@@ -247,7 +247,7 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
                 onChange={(e) => setTextInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddText()}
                 placeholder="Enter text..."
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm mb-2"
+                className="w-full px-3 py-2 mb-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm mb-2"
               />
               <button
                 onClick={handleAddText}
