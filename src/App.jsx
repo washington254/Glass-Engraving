@@ -118,7 +118,6 @@ function App() {
               style={{ 
                 height: '20vh',
                 zIndex: 9999,
-                backgroundColor: 'rgba(255, 0, 0, 0.5)',
                 touchAction: 'auto'
               }}
             />
@@ -129,7 +128,6 @@ function App() {
               style={{ 
                 height: '20vh',
                 zIndex: 9999,
-                backgroundColor: 'rgba(255, 0, 0, 0.5)',
                 touchAction: 'auto'
               }}
             />
@@ -142,7 +140,6 @@ function App() {
                 height: '60vh',
                 width: '15vw',
                 zIndex: 9999,
-                backgroundColor: 'rgba(255, 0, 0, 0.5)',
                 touchAction: 'auto'
               }}
             />
@@ -155,7 +152,6 @@ function App() {
                 height: '60vh',
                 width: '15vw',
                 zIndex: 9999,
-                backgroundColor: 'rgba(255, 0, 0, 0.5)',
                 touchAction: 'auto'
               }}
             />
