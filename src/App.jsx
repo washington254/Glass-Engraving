@@ -114,44 +114,40 @@ function App() {
           <>
             {/* Top zone - 0-20% height */}
             <div 
-              className="md:hidden absolute top-0 left-0 right-0 pointer-events-auto"
+              className="md:hidden absolute top-0 left-0 right-0 pointer-events-auto z-30"
               style={{ 
                 height: '20vh',
-                zIndex: 9999,
                 touchAction: 'auto'
               }}
             />
             
             {/* Bottom zone - 80-100% height */}
             <div 
-              className="md:hidden absolute bottom-0 left-0 right-0 pointer-events-auto"
+              className="md:hidden absolute bottom-0 left-0 right-0 pointer-events-auto z-30"
               style={{ 
                 height: '20vh',
-                zIndex: 9999,
                 touchAction: 'auto'
               }}
             />
             
             {/* Left zone - 0-15% width, middle 60% height */}
             <div 
-              className="md:hidden absolute left-0 pointer-events-auto"
+              className="md:hidden absolute left-0 pointer-events-auto z-30"
               style={{ 
                 top: '20vh',
                 height: '60vh',
                 width: '15vw',
-                zIndex: 9999,
                 touchAction: 'auto'
               }}
             />
             
             {/* Right zone - 85-100% width, middle 60% height */}
             <div 
-              className="md:hidden absolute right-0 pointer-events-auto"
+              className="md:hidden absolute right-0 pointer-events-auto z-30"
               style={{ 
                 top: '20vh',
                 height: '60vh',
                 width: '15vw',
-                zIndex: 9999,
                 touchAction: 'auto'
               }}
             />

@@ -124,12 +124,13 @@ export function BottomLogoUI({ onLogoUpload, onTextChange, currentText = '', cam
   // If we are mobile AND another panel is active, we hide this one visually but keep it mounted
   const visibilityClass = (isMobile && activePanel === 'sticker')
     ? 'opacity-0 pointer-events-none -z-10'
-    : 'opacity-100 pointer-events-auto z-[10000]';
+    : 'opacity-100 pointer-events-auto z-40';
 
   return (
     <div
       onClick={handleContainerClick}
-      className={`absolute z-50 bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 md:translate-x-0 w-auto max-h-[100dvh] md:max-h-[94dvh] overflow-hidden ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm ${isCollapsed ? 'rounded-2xl' : 'rounded-lg'} shadow-xl border border-gray-700 transition-all duration-500 ease-in-out ${isCollapsed ? 'px-4 py-3' : 'p-6'} cursor-pointer md:cursor-default ${visibilityClass}`}
+      style={{padding: '12px 16px'}}
+      className={`absolute bottom-4 left-4 right-4 md:top-4 md:left-4 md:bottom-auto md:w-80 md:translate-x-0 w-auto max-h-[100dvh] md:max-h-[94dvh] overflow-hidden ${isCollapsed ? 'bg-primary-700' : 'bg-gray-900/90'} backdrop-blur-sm ${isCollapsed ? 'rounded-2xl' : 'rounded-lg'} shadow-xl border border-gray-700 transition-all duration-500 ease-in-out  cursor-pointer md:cursor-default ${visibilityClass}`}
     >
       <div className="flex justify-between items-center">
         <h2 className={`text-xl font-bold text-white transition-all duration-300 ${isCollapsed ? 'm-0' : 'mb-4'}`}>Debossed Base Logo</h2>
